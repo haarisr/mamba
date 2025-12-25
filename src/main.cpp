@@ -1,9 +1,13 @@
 #include "window.hpp"
+#include <print>
 
 int main() {
     using namespace mamba;
 
-    WindowSpecification spec{.title="Example", .width = 800, .height = 600};
+    auto event_handler = [](Event& event) { std::println("{}", event.toString()); };
+
+    WindowSpecification spec{
+        .title = "Example", .width = 800, .height = 600, .event_handler = event_handler};
     Window window(spec);
 
     while (!window.shouldClose()) {

@@ -1,4 +1,9 @@
+#pragma once
+
+#include "event.hpp"
+
 #include <cstdint>
+#include <functional>
 #include <string>
 
 #include <glad/glad.h>
@@ -10,6 +15,7 @@ struct WindowSpecification {
     std::string title;
     uint32_t width;
     uint32_t height;
+    std::function<void(Event&)> event_handler;
 };
 
 class Window {
@@ -20,9 +26,10 @@ class Window {
 
     bool shouldClose();
     void update();
-
+    void raiseEvent(Event&);
 
   private:
     GLFWwindow* m_handle;
+    std::function<void(Event&)> m_event_handler;
 };
 } // namespace mamba
