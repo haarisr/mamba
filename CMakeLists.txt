@@ -6,8 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 add_subdirectory(extern)
-
-add_executable(mamba_engine main.cpp)
-target_link_libraries(mamba_engine PRIVATE glfw glad)
+add_subdirectory(src)
