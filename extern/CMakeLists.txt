@@ -15,3 +15,6 @@ FetchContent_MakeAvailable(glfw)
 
 # GLAD - OpenGL 4.6 Core (pre-generated)
 add_subdirectory(glad)
+
+# stb_image
+add_subdirectory(stb)

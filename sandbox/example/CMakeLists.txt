@@ -1,4 +1,4 @@
-add_executable(example main.cpp)
+add_executable(example src/main.cpp src/button.cpp)
 
 target_link_libraries(example PRIVATE mamba)
 

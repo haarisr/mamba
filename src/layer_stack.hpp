@@ -40,6 +40,15 @@ class LayerStack {
         return m_layers.end();
     }
 
+    template<std::derived_from<Layer> T> T* getLayer() {
+        for (auto& layer : m_layers) {
+            if (auto* found = dynamic_cast<T*>(layer.get())) {
+                return found;
+            }
+        }
+        return nullptr;
+    }
+
   private:
     void replace(Layer* current, std::unique_ptr<Layer> replacement) {
         for (auto [i, layer] : std::views::enumerate(m_layers)) {
@@ -53,5 +62,10 @@ class LayerStack {
     std::unordered_map<size_t, std::unique_ptr<Layer>> m_pending_transitions;
     std::vector<std::unique_ptr<Layer>> m_layers;
 };
+
+// Implementation of Layer::getLayer - must be after LayerStack is defined
+template<std::derived_from<Layer> T> T* Layer::getLayer() {
+    return m_stack ? m_stack->getLayer<T>() : nullptr;
+}
 
 } // namespace mamba
