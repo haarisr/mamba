@@ -10,3 +10,4 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 add_subdirectory(extern)
 add_subdirectory(src)
+add_subdirectory(sandbox)

@@ -1,2 +1,2 @@
 #!/bin/bash
-./build.sh && ./build/src/mamba_engine
+./build.sh && ./build/sandbox/example/example
