@@ -47,26 +47,25 @@ Window::Window(const WindowSpecification& spec) : m_event_handler(spec.event_han
         window->raiseEvent(event);
     });
 
-    glfwSetKeyCallback(m_handle,
-                       [](GLFWwindow* handle, int key, int scancode, int action, int mods) {
-                           Window* window = static_cast<Window*>(glfwGetWindowUserPointer(handle));
+    glfwSetKeyCallback(m_handle, [](GLFWwindow* handle, int key, int, int action, int) {
+        Window* window = static_cast<Window*>(glfwGetWindowUserPointer(handle));
 
-                           switch (action) {
-                           case GLFW_PRESS:
-                           case GLFW_REPEAT: {
-                               KeyPressedEvent event(key, action == GLFW_REPEAT);
-                               window->raiseEvent(event);
-                               break;
-                           }
-                           case GLFW_RELEASE: {
-                               KeyReleasedEvent event(key);
-                               window->raiseEvent(event);
-                               break;
-                           }
-                           }
-                       });
+        switch (action) {
+        case GLFW_PRESS:
+        case GLFW_REPEAT: {
+            KeyPressedEvent event(key, action == GLFW_REPEAT);
+            window->raiseEvent(event);
+            break;
+        }
+        case GLFW_RELEASE: {
+            KeyReleasedEvent event(key);
+            window->raiseEvent(event);
+            break;
+        }
+        }
+    });
 
-    glfwSetMouseButtonCallback(m_handle, [](GLFWwindow* handle, int button, int action, int mods) {
+    glfwSetMouseButtonCallback(m_handle, [](GLFWwindow* handle, int button, int action, int) {
         Window* window = static_cast<Window*>(glfwGetWindowUserPointer(handle));
 
         switch (action) {
