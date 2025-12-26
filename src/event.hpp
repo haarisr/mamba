@@ -17,15 +17,9 @@ enum class EventType {
 };
 
 #define EVENT_CLASS_TYPE(type)                                                                     \
-    static EventType getStaticType() {                                                             \
-        return EventType::type;                                                                    \
-    }                                                                                              \
-    virtual EventType getEventType() const override {                                              \
-        return getStaticType();                                                                    \
-    }                                                                                              \
-    virtual const char* getName() const override {                                                 \
-        return #type;                                                                              \
-    }
+    static EventType getStaticType() { return EventType::type; }                                   \
+    virtual EventType getEventType() const override { return getStaticType(); }                    \
+    virtual const char* getName() const override { return #type; }
 
 class Event {
   public:
@@ -34,9 +28,7 @@ class Event {
     virtual ~Event() {}
     virtual EventType getEventType() const = 0;
     virtual const char* getName() const = 0;
-    virtual std::string toString() const {
-        return getName();
-    }
+    virtual std::string toString() const { return getName(); }
 };
 
 } // namespace mamba

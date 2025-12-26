@@ -16,16 +16,12 @@ class Layer {
     virtual void onUpdate(float) {}
     virtual void onRender() {}
 
-    App* getApp() {
-        return m_app;
-    }
+    App* getApp() { return m_app; }
 
   private:
     App* m_app = nullptr;
 
-    void attach(App* app) {
-        m_app = app;
-    }
+    void attach(App* app) { m_app = app; }
 };
 
 } // namespace mamba

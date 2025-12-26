@@ -1,10 +1,9 @@
 #pragma once
 
+#include <glm/ext.hpp>
+
 #include "layer.hpp"
 #include "renderer/renderer.hpp"
-
-#include <glad/glad.h>
-#include <glm/ext.hpp>
 
 class ButtonLayer : public mamba::Layer {
   public:

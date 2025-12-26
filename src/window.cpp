@@ -108,13 +108,9 @@ Window::~Window() {
     glfwTerminate();
 }
 
-bool Window::shouldClose() {
-    return glfwWindowShouldClose(m_handle) != 0;
-}
+bool Window::shouldClose() { return glfwWindowShouldClose(m_handle) != 0; }
 
-void Window::update() {
-    glfwSwapBuffers(m_handle);
-}
+void Window::update() { glfwSwapBuffers(m_handle); }
 
 void Window::raiseEvent(Event& event) {
     if (m_event_handler)

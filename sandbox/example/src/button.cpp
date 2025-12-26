@@ -1,12 +1,13 @@
 #include "button.hpp"
+
+#include <array>
+#include <print>
+
 #include "app.hpp"
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "renderer/shader.hpp"
-
-#include <array>
-#include <print>
 
 ButtonLayer::ButtonLayer() {
     // Load texture

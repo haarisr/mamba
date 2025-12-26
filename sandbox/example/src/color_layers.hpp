@@ -1,8 +1,8 @@
 #pragma once
 
-#include "layer.hpp"
-
 #include <glad/glad.h>
+
+#include "layer.hpp"
 
 class RedLayer : public mamba::Layer {
   public:
