@@ -1,13 +1,13 @@
 #pragma once
 
-#include "layer_stack.hpp"
+#include "app.hpp"
 #include "renderer/renderer.hpp"
 
 #include <glad/glad.h>
 
 class ButtonLayer : public mamba::Layer {
   public:
-    ButtonLayer();
+    ButtonLayer(mamba::App& app);
     ~ButtonLayer();
 
     void onEvent(mamba::Event& event) override;

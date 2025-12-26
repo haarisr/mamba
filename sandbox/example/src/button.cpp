@@ -2,9 +2,10 @@
 #include "color_layers.hpp"
 #include "renderer/shader.hpp"
 
+#include <array>
 #include <print>
 
-ButtonLayer::ButtonLayer() {
+ButtonLayer::ButtonLayer(mamba::App& app) : Layer(app) {
     // Load texture
     m_texture = mamba::Renderer::loadTexture("sandbox/example/textures/Button.png");
 
@@ -18,7 +19,7 @@ ButtonLayer::ButtonLayer() {
     float height = 0.3f;
     float width = height * aspectRatio;
 
-    float vertices[] = {
+    std::array<float, 16> vertices = {
         // positions        // texcoords
         -width, -height, 0.0f, 0.0f, // bottom left
         width,  -height, 1.0f, 0.0f, // bottom right
@@ -26,7 +27,7 @@ ButtonLayer::ButtonLayer() {
         -width, height,  0.0f, 1.0f  // top left
     };
 
-    unsigned int indices[] = {
+    std::array<unsigned int, 6> indices{
         0, 1, 2, // first triangle
         2, 3, 0  // second triangle
     };
@@ -37,8 +38,8 @@ ButtonLayer::ButtonLayer() {
     glCreateBuffers(1, &m_ebo);
 
     // Upload vertex data
-    glNamedBufferStorage(m_vbo, sizeof(vertices), vertices, 0);
-    glNamedBufferStorage(m_ebo, sizeof(indices), indices, 0);
+    glNamedBufferStorage(m_vbo, sizeof(vertices), vertices.data(), 0);
+    glNamedBufferStorage(m_ebo, sizeof(indices), indices.data(), 0);
 
     // Setup VAO
     glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, 4 * sizeof(float));
@@ -67,15 +68,15 @@ void ButtonLayer::onEvent(mamba::Event& event) {
     if (event.getEventType() == mamba::EventType::MouseButtonPressed) {
         std::println("Button clicked!");
 
-        if (auto* red = getLayer<RedLayer>()) {
+        if (auto* red = m_app.getLayer<RedLayer>()) {
             red->transitionTo<GreenLayer>();
-        } else if (auto* green = getLayer<GreenLayer>()) {
+        } else if (auto* green = m_app.getLayer<GreenLayer>()) {
             green->transitionTo<BlueLayer>();
-        } else if (auto* blue = getLayer<BlueLayer>()) {
+        } else if (auto* blue = m_app.getLayer<BlueLayer>()) {
             blue->transitionTo<RedLayer>();
         }
 
-        event.Handled = true;
+        event.handled = true;
     }
 }
 

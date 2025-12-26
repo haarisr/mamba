@@ -6,6 +6,8 @@
 
 class RedLayer : public mamba::Layer {
   public:
+    using Layer::Layer; // Inherit constructor
+
     void onRender() override {
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -14,6 +16,8 @@ class RedLayer : public mamba::Layer {
 
 class GreenLayer : public mamba::Layer {
   public:
+    using Layer::Layer;
+
     void onRender() override {
         glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -22,6 +26,8 @@ class GreenLayer : public mamba::Layer {
 
 class BlueLayer : public mamba::Layer {
   public:
+    using Layer::Layer;
+
     void onRender() override {
         glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);

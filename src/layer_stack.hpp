@@ -63,9 +63,4 @@ class LayerStack {
     std::vector<std::unique_ptr<Layer>> m_layers;
 };
 
-// Implementation of Layer::getLayer - must be after LayerStack is defined
-template<std::derived_from<Layer> T> T* Layer::getLayer() {
-    return m_stack ? m_stack->getLayer<T>() : nullptr;
-}
-
 } // namespace mamba

@@ -29,7 +29,7 @@ enum class EventType {
 
 class Event {
   public:
-    bool Handled = false;
+    bool handled = false;
 
     virtual ~Event() {}
     virtual EventType getEventType() const = 0;
