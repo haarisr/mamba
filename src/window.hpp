@@ -8,6 +8,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 namespace mamba {
 
@@ -27,6 +28,8 @@ class Window {
     bool shouldClose();
     void update();
     void raiseEvent(Event&);
+
+    glm::vec2 getFrameBufferSize() const;
 
   private:
     GLFWwindow* m_handle;

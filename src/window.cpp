@@ -1,5 +1,7 @@
 #include "window.hpp"
+#include "GLFW/glfw3.h"
 #include "event.hpp"
+#include "glm/ext/vector_float2.hpp"
 #include "input_events.hpp"
 #include "window_events.hpp"
 
@@ -117,6 +119,12 @@ void Window::update() {
 void Window::raiseEvent(Event& event) {
     if (m_event_handler)
         m_event_handler(event);
+}
+
+glm::vec2 Window::getFrameBufferSize() const {
+    int width, height;
+    glfwGetFramebufferSize(m_handle, &width, &height);
+    return {width, height};
 }
 
 } // namespace mamba

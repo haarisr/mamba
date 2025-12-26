@@ -1,6 +1,9 @@
 #include "button.hpp"
 #include "color_layers.hpp"
+#include "glm/ext/matrix_float4x4.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "renderer/shader.hpp"
+#include "window.hpp"
 
 #include <array>
 #include <print>
@@ -77,12 +80,15 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 void ButtonLayer::onRender() {
     glUseProgram(m_shader);
 
-    const std::array<float, 16> identity{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    glm::mat4 identity(1.0f);
     auto transform_loc = glGetUniformLocation(m_shader, "uTransform");
-    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, identity.data());
+    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(identity));
 
     glBindTextureUnit(0, m_texture.handle);
     glUniform1i(glGetUniformLocation(m_shader, "uTexture"), 0);
+
+    glm::vec2 framebufferSize = m_app.getWindow().getFrameBufferSize();
+    glViewport(0,0, framebufferSize.x, framebufferSize.y);
 
     // Enable blending for transparency
     glEnable(GL_BLEND);
