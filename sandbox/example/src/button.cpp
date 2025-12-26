@@ -13,18 +13,12 @@ ButtonLayer::ButtonLayer(mamba::App& app) : Layer(app) {
     m_shader = mamba::renderer::createGraphicsShader("sandbox/example/shaders/button.vert",
                                                      "sandbox/example/shaders/button.frag");
 
-    // Quad vertices: position (x, y) and texture coords (u, v)
-    // Centered quad, aspect ratio matches texture (400x200 = 2:1)
-    float aspectRatio = static_cast<float>(m_texture.width) / static_cast<float>(m_texture.height);
-    float height = 0.3f;
-    float width = height * aspectRatio;
-
     std::array<float, 16> vertices = {
         // positions        // texcoords
-        -width, -height, 0.0f, 0.0f, // bottom left
-        width,  -height, 1.0f, 0.0f, // bottom right
-        width,  height,  1.0f, 1.0f, // top right
-        -width, height,  0.0f, 1.0f  // top left
+        -0.5, -0.5, 0.0f, 0.0f, // bottom left
+        0.5,  -0.5, 1.0f, 0.0f, // bottom right
+        0.5,  0.5,  1.0f, 1.0f, // top right
+        -0.5, 0.5,  0.0f, 1.0f  // top left
     };
 
     std::array<unsigned int, 6> indices{
@@ -57,11 +51,11 @@ ButtonLayer::ButtonLayer(mamba::App& app) : Layer(app) {
 }
 
 ButtonLayer::~ButtonLayer() {
-    // glDeleteVertexArrays(1, &m_vao);
-    // glDeleteBuffers(1, &m_vbo);
-    // glDeleteBuffers(1, &m_ebo);
-    // glDeleteProgram(m_shader);
-    // glDeleteTextures(1, &m_texture.handle);
+    glDeleteVertexArrays(1, &m_vao);
+    glDeleteBuffers(1, &m_vbo);
+    glDeleteBuffers(1, &m_ebo);
+    glDeleteProgram(m_shader);
+    glDeleteTextures(1, &m_texture.handle);
 }
 
 void ButtonLayer::onEvent(mamba::Event& event) {
@@ -81,14 +75,18 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 }
 
 void ButtonLayer::onRender() {
-    // Enable blending for transparency
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glUseProgram(m_shader);
+
+    const std::array<float, 16> identity{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    auto transform_loc = glGetUniformLocation(m_shader, "uTransform");
+    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, identity.data());
+
     glBindTextureUnit(0, m_texture.handle);
     glUniform1i(glGetUniformLocation(m_shader, "uTexture"), 0);
 
+    // Enable blending for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
