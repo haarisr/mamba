@@ -1,15 +1,14 @@
 #include "button.hpp"
+#include "app.hpp"
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "renderer/shader.hpp"
-#include "window.hpp"
 
 #include <array>
 #include <print>
 
-ButtonLayer::ButtonLayer(mamba::App& app) : Layer(app) {
+ButtonLayer::ButtonLayer() {
     // Load texture
     m_texture = mamba::Renderer::loadTexture("sandbox/example/textures/Button.png");
 
@@ -63,15 +62,18 @@ ButtonLayer::~ButtonLayer() {
 }
 
 void ButtonLayer::onUpdate(float /*dt*/) {
-    glm::vec2 framebuffer_size = m_app.getWindow().getFrameBufferSize();
-    float aspect_ratio = framebuffer_size.x / framebuffer_size.y;
+    glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
+    // float aspect_ratio = framebuffer_size.x / framebuffer_size.y;
 
     // Update button scale for current aspect ratio
-    float button_size = 0.2f;
-    m_button_scale = glm::vec2(button_size / aspect_ratio, button_size);
+    // glm::vec2 button_pos = m_button_pos;
+    // glm::vec2 button_scale = m_button_scale;
+    // float button_size = 0.5f;
+    // m_button_scale = glm::vec2(button_size / aspect_ratio, button_size);
+    // m_button_pos = glm::vec2(button_pos.x * aspect_ratio, button_pos.y / aspect_ratio);
 
     // Check hover state
-    glm::vec2 mouse_pos = m_app.getWindow().getMousePosition();
+    glm::vec2 mouse_pos = getApp()->getWindow().getMousePosition();
     glm::vec2 mouse_ndc = (mouse_pos / framebuffer_size) * 2.0f - 1.0f;
     mouse_ndc.y *= -1.0f;
 
@@ -88,13 +90,11 @@ void ButtonLayer::onEvent(mamba::Event& event) {
         if (!m_is_hovered)
             return;
         std::println("Button clicked!");
-        if (auto* red = m_app.getLayer<RedLayer>()) {
-            red->transitionTo<GreenLayer>();
-        } else if (auto* green = m_app.getLayer<GreenLayer>()) {
-            green->transitionTo<BlueLayer>();
-        } else if (auto* blue = m_app.getLayer<BlueLayer>()) {
-            blue->transitionTo<RedLayer>();
-        }
+        bool success = getApp()->replaceLayer<RedLayer, GreenLayer>();
+        if (!success)
+            success = getApp()->replaceLayer<GreenLayer, BlueLayer>();
+        if (!success)
+            getApp()->replaceLayer<BlueLayer, RedLayer>();
 
         event.handled = true;
     }
@@ -113,7 +113,7 @@ void ButtonLayer::onRender() {
     glBindTextureUnit(0, m_texture.handle);
     glUniform1i(glGetUniformLocation(m_shader, "uTexture"), 0);
 
-    glm::vec2 framebuffer_size = m_app.getWindow().getFrameBufferSize();
+    glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
     glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
 
     // Enable blending for transparency

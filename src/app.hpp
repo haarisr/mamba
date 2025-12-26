@@ -3,7 +3,9 @@
 #include "layer_stack.hpp"
 #include "window.hpp"
 
+#include <memory>
 #include <string>
+#include <utility>
 
 namespace mamba {
 
@@ -21,11 +23,20 @@ class App {
     void run();
 
     template<std::derived_from<Layer> T, typename... Args> void pushLayer(Args&&... args) {
-        m_layers.push<T>(*this, std::forward<Args>(args)...);
+        auto layer = std::make_unique<T>(std::forward<Args>(args)...);
+        layer->attach(this);
+        m_layers.push(std::move(layer));
     }
 
     template<std::derived_from<Layer> T> T* getLayer() {
         return m_layers.getLayer<T>();
+    }
+
+    template<std::derived_from<Layer> Old, std::derived_from<Layer> New, typename... Args>
+    bool replaceLayer(Args&&... args) {
+        auto replacement = std::make_unique<New>(std::forward<Args>(args)...);
+        replacement->attach(this);
+        return m_layers.replace<Old>(std::move(replacement));
     }
 
     Window& getWindow() {

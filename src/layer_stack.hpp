@@ -10,18 +10,23 @@
 namespace mamba {
 
 class LayerStack {
-    friend class Layer;
-
   public:
-    template<std::derived_from<Layer> T, typename... Args> void push(Args&&... args) {
-        auto layer = std::make_unique<T>(std::forward<Args>(args)...);
-        layer->attach(this);
+    void push(std::unique_ptr<Layer> layer) {
         m_layers.push_back(std::move(layer));
+    }
+
+    template<std::derived_from<Layer> Old> bool replace(std::unique_ptr<Layer> replacement) {
+        for (auto [i, layer] : std::views::enumerate(m_layers)) {
+            if (dynamic_cast<Old*>(layer.get())) {
+                m_pending_transitions[i] = std::move(replacement);
+                return true;
+            }
+        }
+        return false;
     }
 
     void applyPendingTransitions() {
         for (auto& [i, replacement] : m_pending_transitions) {
-            replacement->attach(this);
             m_layers[i] = std::move(replacement);
         }
         m_pending_transitions.clear();
@@ -50,15 +55,6 @@ class LayerStack {
     }
 
   private:
-    void replace(Layer* current, std::unique_ptr<Layer> replacement) {
-        for (auto [i, layer] : std::views::enumerate(m_layers)) {
-            if (layer.get() == current) {
-                m_pending_transitions[i] = std::move(replacement);
-                return;
-            }
-        }
-    }
-
     std::unordered_map<size_t, std::unique_ptr<Layer>> m_pending_transitions;
     std::vector<std::unique_ptr<Layer>> m_layers;
 };
