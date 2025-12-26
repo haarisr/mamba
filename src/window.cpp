@@ -127,4 +127,10 @@ glm::vec2 Window::getFrameBufferSize() const {
     return {width, height};
 }
 
+glm::vec2 Window::getMousePosition() const {
+    double x, y;
+    glfwGetCursorPos(m_handle, &x, &y);
+    return {x, y};
+}
+
 } // namespace mamba

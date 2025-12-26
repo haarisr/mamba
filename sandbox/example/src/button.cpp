@@ -1,6 +1,7 @@
 #include "button.hpp"
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "renderer/shader.hpp"
 #include "window.hpp"
@@ -61,10 +62,32 @@ ButtonLayer::~ButtonLayer() {
     glDeleteTextures(1, &m_texture.handle);
 }
 
+void ButtonLayer::onUpdate(float /*dt*/) {
+    glm::vec2 framebuffer_size = m_app.getWindow().getFrameBufferSize();
+    float aspect_ratio = framebuffer_size.x / framebuffer_size.y;
+
+    // Update button scale for current aspect ratio
+    float button_size = 0.2f;
+    m_button_scale = glm::vec2(button_size / aspect_ratio, button_size);
+
+    // Check hover state
+    glm::vec2 mouse_pos = m_app.getWindow().getMousePosition();
+    glm::vec2 mouse_ndc = (mouse_pos / framebuffer_size) * 2.0f - 1.0f;
+    mouse_ndc.y *= -1.0f;
+
+    glm::vec2 half_size = m_button_scale * 0.5f;
+    glm::vec2 min_bound = m_button_pos - half_size;
+    glm::vec2 max_bound = m_button_pos + half_size;
+
+    m_is_hovered = mouse_ndc.x >= min_bound.x && mouse_ndc.x <= max_bound.x &&
+                   mouse_ndc.y >= min_bound.y && mouse_ndc.y <= max_bound.y;
+}
+
 void ButtonLayer::onEvent(mamba::Event& event) {
     if (event.getEventType() == mamba::EventType::MouseButtonPressed) {
+        if (!m_is_hovered)
+            return;
         std::println("Button clicked!");
-
         if (auto* red = m_app.getLayer<RedLayer>()) {
             red->transitionTo<GreenLayer>();
         } else if (auto* green = m_app.getLayer<GreenLayer>()) {
@@ -80,15 +103,18 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 void ButtonLayer::onRender() {
     glUseProgram(m_shader);
 
-    glm::mat4 identity(1.0f);
+    glm::mat4 transform(1.0f);
+    transform = glm::translate(transform, glm::vec3(m_button_pos, 0.0f));
+    transform = glm::scale(transform, glm::vec3(m_button_scale, 1.0f));
+
     auto transform_loc = glGetUniformLocation(m_shader, "uTransform");
-    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(identity));
+    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transform));
 
     glBindTextureUnit(0, m_texture.handle);
     glUniform1i(glGetUniformLocation(m_shader, "uTexture"), 0);
 
-    glm::vec2 framebufferSize = m_app.getWindow().getFrameBufferSize();
-    glViewport(0,0, framebufferSize.x, framebufferSize.y);
+    glm::vec2 framebuffer_size = m_app.getWindow().getFrameBufferSize();
+    glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
 
     // Enable blending for transparency
     glEnable(GL_BLEND);

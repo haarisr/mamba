@@ -30,6 +30,7 @@ class Window {
     void raiseEvent(Event&);
 
     glm::vec2 getFrameBufferSize() const;
+    glm::vec2 getMousePosition() const;
 
   private:
     GLFWwindow* m_handle;
