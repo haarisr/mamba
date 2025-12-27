@@ -1,8 +1,11 @@
 #pragma once
 
+#include <memory>
+
 #include <glm/ext.hpp>
 
 #include "layer.hpp"
+#include "renderer/camera.hpp"
 #include "renderer/renderer.hpp"
 
 class ButtonLayer : public mamba::Layer {
@@ -21,8 +24,10 @@ class ButtonLayer : public mamba::Layer {
     GLuint m_ebo{};
     GLuint m_shader{};
 
-    // Computed per frame
-    glm::vec2 m_button_pos{-0.7f, -0.7f};
-    glm::vec2 m_button_scale{0.2f, 0.2f};
+    std::unique_ptr<mamba::OrthographicCamera> m_camera;
+
+    // Button properties in pixels
+    glm::vec2 m_button_pos{100.0f, 100.0f};
+    glm::vec2 m_button_scale{150.0f, 50.0f};
     bool m_is_hovered{false};
 };

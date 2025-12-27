@@ -7,6 +7,7 @@
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/trigonometric.hpp"
 #include "renderer/shader.hpp"
 
 ButtonLayer::ButtonLayer() {
@@ -64,33 +65,33 @@ ButtonLayer::~ButtonLayer() {
 
 void ButtonLayer::onUpdate(float /*dt*/) {
     glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
-    // float aspect_ratio = framebuffer_size.x / framebuffer_size.y;
 
-    // Update button scale for current aspect ratio
-    // glm::vec2 button_pos = m_button_pos;
-    // glm::vec2 button_scale = m_button_scale;
-    // float button_size = 0.5f;
-    // m_button_scale = glm::vec2(button_size / aspect_ratio, button_size);
-    // m_button_pos = glm::vec2(button_pos.x * aspect_ratio, button_pos.y / aspect_ratio);
+    // Initialize or update camera projection on resize
+    if (!m_camera) {
+        m_camera =
+            std::make_unique<mamba::OrthographicCamera>(framebuffer_size.x, framebuffer_size.y);
+    } else {
+        m_camera->setProjection(framebuffer_size.x, framebuffer_size.y);
+    }
 
-    // Check hover state
+    // Check hover state using pixel coordinates
+    // Mouse position is in pixels with (0,0) at top-left, Y down
+    // Our camera has (0,0) at bottom-left, Y up
     glm::vec2 mouse_pos = getApp()->getWindow().getMousePosition();
-    glm::vec2 mouse_ndc = (mouse_pos / framebuffer_size) * 2.0f - 1.0f;
-    mouse_ndc.y *= -1.0f;
+    mouse_pos.y = framebuffer_size.y - mouse_pos.y; // Flip Y to match camera
 
     glm::vec2 half_size = m_button_scale * 0.5f;
     glm::vec2 min_bound = m_button_pos - half_size;
     glm::vec2 max_bound = m_button_pos + half_size;
 
-    m_is_hovered = mouse_ndc.x >= min_bound.x && mouse_ndc.x <= max_bound.x &&
-                   mouse_ndc.y >= min_bound.y && mouse_ndc.y <= max_bound.y;
+    m_is_hovered = mouse_pos.x >= min_bound.x && mouse_pos.x <= max_bound.x &&
+                   mouse_pos.y >= min_bound.y && mouse_pos.y <= max_bound.y;
 }
 
 void ButtonLayer::onEvent(mamba::Event& event) {
     if (event.getEventType() == mamba::EventType::MouseButtonPressed) {
         if (!m_is_hovered)
             return;
-        std::println("Button clicked!");
         bool success = getApp()->replaceLayer<RedLayer, GreenLayer>();
         if (!success)
             success = getApp()->replaceLayer<GreenLayer, BlueLayer>();
@@ -104,15 +105,20 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 void ButtonLayer::onRender() {
     glUseProgram(m_shader);
 
-    glm::mat4 transform(1.0f);
-    transform = glm::translate(transform, glm::vec3(m_button_pos, 0.0f));
-    transform = glm::scale(transform, glm::vec3(m_button_scale, 1.0f));
+    // Model matrix: position and scale the button
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, glm::vec3(m_button_pos, 0.0f));
+    model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0, 0, 1));
+    model = glm::scale(model, glm::vec3(m_button_scale, 1.0f));
 
-    auto transform_loc = glGetUniformLocation(m_shader, "uTransform");
-    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transform));
+    // Combine view-projection with model
+    glm::mat4 transform = m_camera->getViewProjectionMatrix() * model;
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(transform));
 
     glBindTextureUnit(0, m_texture.handle);
-    glUniform1i(glGetUniformLocation(m_shader, "uTexture"), 0);
+    glUniform1i(1, 0);
+
+    glUniform1ui(2, m_is_hovered);
 
     glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
     glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
