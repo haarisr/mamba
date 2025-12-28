@@ -1,7 +1,6 @@
 #include "button.hpp"
 
 #include <array>
-#include <print>
 
 #include "app.hpp"
 #include "color_layers.hpp"
@@ -15,7 +14,7 @@ ButtonLayer::ButtonLayer() {
     m_texture = mamba::Renderer::loadTexture("sandbox/example/textures/Button.png");
 
     // Create shader
-    m_shader = mamba::renderer::createGraphicsShader("sandbox/example/shaders/button.vert",
+    m_shader = mamba::Renderer::createGraphicsShader("sandbox/example/shaders/button.vert",
                                                      "sandbox/example/shaders/button.frag");
 
     std::array<float, 16> vertices = {
@@ -121,7 +120,7 @@ void ButtonLayer::onRender() {
     glUniform1ui(2, m_is_hovered);
 
     glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
-    glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
+    glViewport(0, 0, static_cast<int>(framebuffer_size.x), static_cast<int>(framebuffer_size.y));
 
     // Enable blending for transparency
     glEnable(GL_BLEND);

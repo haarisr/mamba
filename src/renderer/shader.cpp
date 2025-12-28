@@ -44,7 +44,7 @@ GLuint compileShader(const char* source, GLuint shader_type) {
 
 namespace mamba {
 
-namespace renderer {
+namespace Renderer {
 
 uint32_t createGraphicsShader(const std::filesystem::path& vertex_path,
                               const std::filesystem::path& fragment_path) {
