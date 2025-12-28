@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <optional>
+#include <utility>
 #include <vector>
 
 #include <glad/glad.h>
@@ -46,8 +48,18 @@ namespace mamba {
 
 namespace Renderer {
 
-uint32_t createGraphicsShader(const std::filesystem::path& vertex_path,
-                              const std::filesystem::path& fragment_path) {
+Shader::Shader(Shader&& other) noexcept : m_program(std::exchange(other.m_program, 0)) {}
+
+Shader& Shader::operator=(Shader&& other) noexcept {
+    std::swap(m_program, other.m_program);
+    return *this;
+}
+
+void Shader::bind() { glUseProgram(m_program); }
+void Shader::unbind() { glUseProgram(0); }
+
+std::optional<Shader> Shader::create(const std::filesystem::path& vertex_path,
+                                     const std::filesystem::path& fragment_path) {
     std::string vertex_shader_src = readFile(vertex_path);
     std::string fragment_shader_src = readFile(fragment_path);
 
@@ -76,8 +88,8 @@ uint32_t createGraphicsShader(const std::filesystem::path& vertex_path,
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-    return program;
+    return Shader(program);
 }
 
-} // namespace renderer
+} // namespace Renderer
 } // namespace mamba

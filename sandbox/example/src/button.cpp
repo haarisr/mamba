@@ -10,12 +10,13 @@
 #include "renderer/shader.hpp"
 
 ButtonLayer::ButtonLayer() {
+    using namespace ::mamba::Renderer;
     // Load texture
     m_texture = mamba::Renderer::loadTexture("sandbox/example/textures/Button.png");
 
     // Create shader
-    m_shader = mamba::Renderer::createGraphicsShader("sandbox/example/shaders/button.vert",
-                                                     "sandbox/example/shaders/button.frag");
+    m_shader = Shader::create("sandbox/example/shaders/button.vert",
+                              "sandbox/example/shaders/button.frag");
 
     std::array<float, 16> vertices = {
         // positions        // texcoords
@@ -58,7 +59,6 @@ ButtonLayer::~ButtonLayer() {
     glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
     glDeleteBuffers(1, &m_ebo);
-    glDeleteProgram(m_shader);
     glDeleteTextures(1, &m_texture.handle);
 }
 
@@ -102,7 +102,7 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 }
 
 void ButtonLayer::onRender() {
-    glUseProgram(m_shader);
+    m_shader->bind();
 
     // Model matrix: position and scale the button
     glm::mat4 model(1.0f);

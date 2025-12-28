@@ -7,6 +7,7 @@
 #include "layer.hpp"
 #include "renderer/camera.hpp"
 #include "renderer/renderer.hpp"
+#include "renderer/shader.hpp"
 
 class ButtonLayer : public mamba::Layer {
   public:
@@ -22,7 +23,7 @@ class ButtonLayer : public mamba::Layer {
     GLuint m_vao{};
     GLuint m_vbo{};
     GLuint m_ebo{};
-    GLuint m_shader{};
+    std::optional<mamba::Renderer::Shader> m_shader;
 
     std::unique_ptr<mamba::OrthographicCamera> m_camera;
 
