@@ -1,7 +1,5 @@
 #include "button.hpp"
 
-#include <array>
-
 #include "app.hpp"
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
@@ -31,8 +29,7 @@ ButtonLayer::ButtonLayer() {
         2, 3, 0  // second triangle
     };
 
-    // Create VAO, VBO, EBO
-    glCreateVertexArrays(1, &m_vao);
+    // Create VBO, EBO
     glCreateBuffers(1, &m_vbo);
     glCreateBuffers(1, &m_ebo);
 
@@ -41,22 +38,23 @@ ButtonLayer::ButtonLayer() {
     glNamedBufferStorage(m_ebo, sizeof(indices), indices.data(), 0);
 
     // Setup VAO
-    glVertexArrayVertexBuffer(m_vao, 0, m_vbo, 0, 4 * sizeof(float));
-    glVertexArrayElementBuffer(m_vao, m_ebo);
+    m_vao.addVertexBuffer([this](GLuint handle) {
+        glVertexArrayVertexBuffer(handle, 0, m_vbo, 0, 4 * sizeof(float));
 
-    // Position attribute (location 0)
-    glEnableVertexArrayAttrib(m_vao, 0);
-    glVertexArrayAttribFormat(m_vao, 0, 2, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(m_vao, 0, 0);
+        // Position attribute (location 0)
+        glEnableVertexArrayAttrib(handle, 0);
+        glVertexArrayAttribFormat(handle, 0, 2, GL_FLOAT, GL_FALSE, 0);
+        glVertexArrayAttribBinding(handle, 0, 0);
 
-    // Texture coord attribute (location 1)
-    glEnableVertexArrayAttrib(m_vao, 1);
-    glVertexArrayAttribFormat(m_vao, 1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float));
-    glVertexArrayAttribBinding(m_vao, 1, 0);
+        // Texture coord attribute (location 1)
+        glEnableVertexArrayAttrib(handle, 1);
+        glVertexArrayAttribFormat(handle, 1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float));
+        glVertexArrayAttribBinding(handle, 1, 0);
+    });
+    m_vao.addIndexBuffer(m_ebo);
 }
 
 ButtonLayer::~ButtonLayer() {
-    glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
     glDeleteBuffers(1, &m_ebo);
     glDeleteTextures(1, &m_texture.handle);
@@ -125,6 +123,6 @@ void ButtonLayer::onRender() {
     // Enable blending for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBindVertexArray(m_vao);
+    m_vao.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }

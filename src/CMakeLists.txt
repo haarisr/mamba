@@ -1,7 +1,9 @@
-add_library(mamba STATIC app.cpp window.cpp renderer/shader.cpp renderer/renderer.cpp renderer/camera.cpp)
+add_subdirectory(renderer)
+
+add_library(mamba STATIC app.cpp window.cpp)
 
 target_include_directories(mamba PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(mamba PUBLIC glfw glad stb_image glm::glm)
+target_link_libraries(mamba PUBLIC glfw glad stb_image glm::glm mamba::renderer)
 
 target_compile_options(mamba PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /permissive->
