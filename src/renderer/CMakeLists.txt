@@ -3,6 +3,8 @@ add_library(mamba_renderer STATIC
  renderer.cpp
  shader.cpp
  vertex_array.cpp
+ index_buffer.cpp
+ vertex_buffer.cpp
 )
 
 add_library(mamba::renderer ALIAS mamba_renderer)

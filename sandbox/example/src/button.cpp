@@ -5,7 +5,10 @@
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/trigonometric.hpp"
+#include "renderer/index_buffer.hpp"
 #include "renderer/shader.hpp"
+#include "renderer/vertex_array.hpp"
+#include <span>
 
 ButtonLayer::ButtonLayer() {
     using namespace ::mamba::Renderer;
@@ -16,49 +19,37 @@ ButtonLayer::ButtonLayer() {
     m_shader = Shader::create("sandbox/example/shaders/button.vert",
                               "sandbox/example/shaders/button.frag");
 
-    std::array<float, 16> vertices = {
-        // positions        // texcoords
-        -0.5, -0.5, 0.0f, 0.0f, // bottom left
-        0.5,  -0.5, 1.0f, 0.0f, // bottom right
-        0.5,  0.5,  1.0f, 1.0f, // top right
-        -0.5, 0.5,  0.0f, 1.0f  // top left
-    };
+    // Create VAO
+    {
 
-    std::array<unsigned int, 6> indices{
-        0, 1, 2, // first triangle
-        2, 3, 0  // second triangle
-    };
+        const std::array<float, 16> vertices = {
+            // positions        // texcoords
+            -0.5, -0.5, 0.0f, 0.0f, // bottom left
+            0.5,  -0.5, 1.0f, 0.0f, // bottom right
+            0.5,  0.5,  1.0f, 1.0f, // top right
+            -0.5, 0.5,  0.0f, 1.0f  // top left
+        };
 
-    // Create VBO, EBO
-    glCreateBuffers(1, &m_vbo);
-    glCreateBuffers(1, &m_ebo);
+        mamba::Renderer::VertexLayout layout = {
+            {ShaderDataType::Float2, 0},
+            {ShaderDataType::Float2, 1},
+        };
+        m_vbo.emplace(std::span(vertices));
+        m_vao.addVertexBuffer(*m_vbo, layout);
+    }
 
-    // Upload vertex data
-    glNamedBufferStorage(m_vbo, sizeof(vertices), vertices.data(), 0);
-    glNamedBufferStorage(m_ebo, sizeof(indices), indices.data(), 0);
-
-    // Setup VAO
-    m_vao.addVertexBuffer([this](GLuint handle) {
-        glVertexArrayVertexBuffer(handle, 0, m_vbo, 0, 4 * sizeof(float));
-
-        // Position attribute (location 0)
-        glEnableVertexArrayAttrib(handle, 0);
-        glVertexArrayAttribFormat(handle, 0, 2, GL_FLOAT, GL_FALSE, 0);
-        glVertexArrayAttribBinding(handle, 0, 0);
-
-        // Texture coord attribute (location 1)
-        glEnableVertexArrayAttrib(handle, 1);
-        glVertexArrayAttribFormat(handle, 1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float));
-        glVertexArrayAttribBinding(handle, 1, 0);
-    });
-    m_vao.addIndexBuffer(m_ebo);
+    // Create EBO
+    {
+        const std::array<unsigned int, 6> indices{
+            0, 1, 2, // first triangle
+            2, 3, 0  // second triangle
+        };
+        m_ebo.emplace(indices);
+        m_vao.addIndexBuffer(*m_ebo);
+    }
 }
 
-ButtonLayer::~ButtonLayer() {
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteBuffers(1, &m_ebo);
-    glDeleteTextures(1, &m_texture.handle);
-}
+ButtonLayer::~ButtonLayer() { glDeleteTextures(1, &m_texture.handle); }
 
 void ButtonLayer::onUpdate(float /*dt*/) {
     glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
@@ -125,4 +116,6 @@ void ButtonLayer::onRender() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     m_vao.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    m_vao.unbind();
+    m_shader->unbind();
 }

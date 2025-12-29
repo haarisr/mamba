@@ -3,12 +3,15 @@
 #include <memory>
 
 #include <glm/ext.hpp>
+#include <optional>
 
 #include "layer.hpp"
 #include "renderer/camera.hpp"
+#include "renderer/index_buffer.hpp"
 #include "renderer/renderer.hpp"
 #include "renderer/shader.hpp"
 #include "renderer/vertex_array.hpp"
+#include "renderer/vertex_buffer.hpp"
 
 class ButtonLayer : public mamba::Layer {
   public:
@@ -22,10 +25,9 @@ class ButtonLayer : public mamba::Layer {
   private:
     mamba::Texture m_texture{};
     std::optional<mamba::Renderer::Shader> m_shader;
+    std::optional<mamba::Renderer::IndexBuffer> m_ebo;
+    std::optional<mamba::Renderer::VertexBuffer> m_vbo;
     mamba::Renderer::VertexArray m_vao;
-    GLuint m_vbo{};
-    GLuint m_ebo{};
-
 
     std::unique_ptr<mamba::OrthographicCamera> m_camera;
 

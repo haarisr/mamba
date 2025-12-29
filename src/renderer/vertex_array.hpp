@@ -1,10 +1,16 @@
 #pragma once
 
-#include "glad/glad.h"
-#include <functional>
+#include "renderer/index_buffer.hpp"
+#include "renderer/vertex_buffer.hpp"
+
+#include <glad/glad.h>
+#include <vector>
 
 namespace mamba {
 namespace Renderer {
+
+enum class ShaderDataType { Float1, Float2, Float3, Float4 };
+using VertexLayout = std::vector<std::pair<ShaderDataType, uint32_t>>;
 
 class VertexArray {
 
@@ -20,8 +26,8 @@ class VertexArray {
     void bind();
     void unbind();
 
-    void addVertexBuffer(const std::function<void(GLuint)>);
-    void addIndexBuffer(GLuint);
+    void addVertexBuffer(const VertexBuffer&, const VertexLayout&);
+    void addIndexBuffer(const IndexBuffer&);
 
   private:
     GLuint m_handle{0};
