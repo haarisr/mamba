@@ -13,7 +13,7 @@
 ButtonLayer::ButtonLayer() {
     using namespace ::mamba::Renderer;
     // Load texture
-    m_texture = mamba::Renderer::loadTexture("sandbox/example/textures/Button.png");
+    m_texture = Texture::create("sandbox/example/textures/Button.png");
 
     // Create shader
     m_shader = Shader::create("sandbox/example/shaders/button.vert",
@@ -48,8 +48,6 @@ ButtonLayer::ButtonLayer() {
         m_vao.addIndexBuffer(*m_ebo);
     }
 }
-
-ButtonLayer::~ButtonLayer() { glDeleteTextures(1, &m_texture.handle); }
 
 void ButtonLayer::onUpdate(float /*dt*/) {
     glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
@@ -103,7 +101,7 @@ void ButtonLayer::onRender() {
     glm::mat4 transform = m_camera->getViewProjectionMatrix() * model;
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(transform));
 
-    glBindTextureUnit(0, m_texture.handle);
+    glBindTextureUnit(0, m_texture->handle());
     glUniform1i(1, 0);
 
     glUniform1ui(2, m_is_hovered);

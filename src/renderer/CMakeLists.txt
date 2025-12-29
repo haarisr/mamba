@@ -2,6 +2,7 @@ add_library(mamba_renderer STATIC
  camera.cpp
  renderer.cpp
  shader.cpp
+ texture.cpp
  vertex_array.cpp
  index_buffer.cpp
  vertex_buffer.cpp
