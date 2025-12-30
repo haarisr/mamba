@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "event.hpp"
 
 #include <GLFW/glfw3.h>
 #include <ranges>
@@ -35,6 +36,9 @@ void App::run() {
 }
 
 void App::onEvent(Event& event) {
+    if (event.getEventType() == EventType::WindowResize) {
+        onWindowResize(static_cast<WindowResizeEvent&>(event));
+    }
     for (auto& layer : m_layers) {
         layer->onEvent(event);
         if (event.handled)
@@ -42,4 +46,7 @@ void App::onEvent(Event& event) {
     }
 }
 
+void App::onWindowResize(WindowResizeEvent& event) {
+    m_renderer.setViewPort(event.getWidth(), event.getHeight());
+}
 } // namespace mamba

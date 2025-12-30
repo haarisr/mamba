@@ -7,6 +7,7 @@
 #include "layer_stack.hpp"
 #include "renderer/renderer.hpp"
 #include "window.hpp"
+#include "window_events.hpp"
 
 namespace mamba {
 
@@ -43,6 +44,7 @@ class App {
 
   private:
     void onEvent(Event& event);
+    void onWindowResize(WindowResizeEvent& event);
 
     Window m_window;
     Renderer::Renderer2D m_renderer;

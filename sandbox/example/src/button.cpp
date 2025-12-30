@@ -61,14 +61,8 @@ void ButtonLayer::onRender() {
 
     auto& renderer = getApp()->getRenderer();
 
-    glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
-    glViewport(0, 0, static_cast<int>(framebuffer_size.x), static_cast<int>(framebuffer_size.y));
-
     renderer.begin(*m_camera);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     auto tint = m_is_hovered ? glm::vec4(2.0, 2.0, 2.0, 1.0) : glm::vec4(1.0, 1.0, 1.0, 1.0);
     renderer.drawQuad(model, m_texture.value(), tint);
+    renderer.end();
 }

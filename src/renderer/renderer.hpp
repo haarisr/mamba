@@ -7,6 +7,8 @@
 #include "renderer/texture.hpp"
 #include "renderer/vertex_array.hpp"
 #include "renderer/vertex_buffer.hpp"
+
+#include <array>
 #include <optional>
 
 namespace mamba {
@@ -25,9 +27,16 @@ class Renderer2D {
     Renderer2D();
 
     void begin(const OrthographicCamera&);
+    void end();
     void clear();
     void setClearColor(const glm::vec4&);
+    void setViewPort(uint32_t, uint32_t);
     void drawQuad(const glm::mat4&, const Texture&, const glm::vec4&);
+
+  private:
+    int insertTexture(const Texture& texture);
+    void startBatch();
+    void nextBatch();
     void flush();
 
   private:
@@ -35,6 +44,10 @@ class Renderer2D {
     std::optional<mamba::Renderer::IndexBuffer> m_ebo;
     std::optional<mamba::Renderer::VertexBuffer<QuadVertex>> m_vbo;
     mamba::Renderer::VertexArray m_vao;
+
+    std::vector<QuadVertex> m_quad_vertices;
+    std::array<GLuint, 16> m_texture_slots;
+    size_t m_texture_idx;
 };
 
 } // namespace Renderer
