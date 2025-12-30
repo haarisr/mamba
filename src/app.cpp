@@ -1,5 +1,6 @@
 #include "app.hpp"
 
+#include <GLFW/glfw3.h>
 #include <ranges>
 
 namespace mamba {
@@ -11,11 +12,17 @@ App::App(const AppSpecification& spec)
                                    .event_handler = [this](Event& e) { onEvent(e); }}) {}
 
 void App::run() {
+    float last_time = static_cast<float>(glfwGetTime());
+
     while (!m_window.shouldClose() && m_running) {
+        float current_time = static_cast<float>(glfwGetTime());
+        float dt = current_time - last_time;
+        last_time = current_time;
+
         glfwPollEvents();
 
         for (auto& layer : m_layers | std::views::reverse) {
-            layer->onUpdate(0.0f);
+            layer->onUpdate(dt);
         }
 
         for (auto& layer : m_layers | std::views::reverse) {
