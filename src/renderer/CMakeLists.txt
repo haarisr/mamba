@@ -5,7 +5,6 @@ add_library(mamba_renderer STATIC
  texture.cpp
  vertex_array.cpp
  index_buffer.cpp
- vertex_buffer.cpp
 )
 
 add_library(mamba::renderer ALIAS mamba_renderer)

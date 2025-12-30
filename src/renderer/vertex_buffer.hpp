@@ -6,21 +6,31 @@
 namespace mamba {
 namespace Renderer {
 
-class VertexBuffer {
+template <typename T> class VertexBuffer {
 
   public:
-    template <typename T, std::size_t Extent> VertexBuffer(std::span<const T, Extent> indices) {
+    VertexBuffer(size_t max_count) {
         glCreateBuffers(1, &m_handle);
-        glNamedBufferStorage(m_handle, indices.size_bytes(), indices.data(), 0);
+        glNamedBufferStorage(m_handle, stride() * max_count, nullptr, GL_DYNAMIC_STORAGE_BIT);
     }
-    ~VertexBuffer();
+    ~VertexBuffer() { glDeleteBuffers(1, &m_handle); }
 
     VertexBuffer(const VertexBuffer&) = delete;
     VertexBuffer& operator=(const VertexBuffer&) = delete;
-    VertexBuffer(VertexBuffer&&) noexcept;
-    VertexBuffer& operator=(VertexBuffer&&) noexcept;
+
+    VertexBuffer(VertexBuffer&& other) noexcept : m_handle(std::exchange(other.m_handle, 0)) {}
+    VertexBuffer& operator=(VertexBuffer&& other) noexcept {
+        std::swap(m_handle, other.m_handle);
+        return *this;
+    }
 
     GLuint handle() const { return m_handle; }
+
+    void update(std::span<const T> vertices) {
+        glNamedBufferSubData(m_handle, 0, vertices.size_bytes(), vertices.data());
+    }
+
+    static consteval size_t stride() { return sizeof(T); }
 
   private:
     GLuint m_handle{0};

@@ -3,50 +3,13 @@
 #include "app.hpp"
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "glm/trigonometric.hpp"
-#include "renderer/index_buffer.hpp"
-#include "renderer/shader.hpp"
-#include "renderer/vertex_array.hpp"
-#include <span>
+#include <print>
 
 ButtonLayer::ButtonLayer() {
     using namespace ::mamba::Renderer;
     // Load texture
     m_texture = Texture::create("sandbox/example/textures/Button.png");
-
-    // Create shader
-    m_shader = Shader::create("sandbox/example/shaders/button.vert",
-                              "sandbox/example/shaders/button.frag");
-
-    // Create VAO
-    {
-
-        const std::array<float, 16> vertices = {
-            // positions        // texcoords
-            -0.5, -0.5, 0.0f, 0.0f, // bottom left
-            0.5,  -0.5, 1.0f, 0.0f, // bottom right
-            0.5,  0.5,  1.0f, 1.0f, // top right
-            -0.5, 0.5,  0.0f, 1.0f  // top left
-        };
-
-        mamba::Renderer::VertexLayout layout = {
-            {ShaderDataType::Float2, 0},
-            {ShaderDataType::Float2, 1},
-        };
-        m_vbo.emplace(std::span(vertices));
-        m_vao.addVertexBuffer(*m_vbo, layout);
-    }
-
-    // Create EBO
-    {
-        const std::array<unsigned int, 6> indices{
-            0, 1, 2, // first triangle
-            2, 3, 0  // second triangle
-        };
-        m_ebo.emplace(indices);
-        m_vao.addIndexBuffer(*m_ebo);
-    }
 }
 
 void ButtonLayer::onUpdate(float /*dt*/) {
@@ -89,7 +52,6 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 }
 
 void ButtonLayer::onRender() {
-    m_shader->bind();
 
     // Model matrix: position and scale the button
     glm::mat4 model(1.0f);
@@ -97,23 +59,16 @@ void ButtonLayer::onRender() {
     model = glm::rotate(model, glm::radians(10.0f), glm::vec3(0, 0, 1));
     model = glm::scale(model, glm::vec3(m_button_scale, 1.0f));
 
-    // Combine view-projection with model
-    glm::mat4 transform = m_camera->getViewProjectionMatrix() * model;
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(transform));
-
-    glBindTextureUnit(0, m_texture->handle());
-    glUniform1i(1, 0);
-
-    glUniform1ui(2, m_is_hovered);
+    auto& renderer = getApp()->getRenderer();
 
     glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
     glViewport(0, 0, static_cast<int>(framebuffer_size.x), static_cast<int>(framebuffer_size.y));
 
-    // Enable blending for transparency
+    renderer.begin(*m_camera);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    m_vao.bind();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    m_vao.unbind();
-    m_shader->unbind();
+
+    auto tint = m_is_hovered ? glm::vec4(2.0, 2.0, 2.0, 1.0) : glm::vec4(1.0, 1.0, 1.0, 1.0);
+    renderer.drawQuad(model, m_texture.value(), tint);
 }

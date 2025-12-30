@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "layer_stack.hpp"
+#include "renderer/renderer.hpp"
 #include "window.hpp"
 
 namespace mamba {
@@ -38,11 +39,13 @@ class App {
     }
 
     Window& getWindow() { return m_window; }
+    Renderer::Renderer2D& getRenderer() { return m_renderer; }
 
   private:
     void onEvent(Event& event);
 
     Window m_window;
+    Renderer::Renderer2D m_renderer;
     LayerStack m_layers;
     bool m_running = true;
 };
