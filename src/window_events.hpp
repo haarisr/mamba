@@ -15,17 +15,17 @@ class WindowClosedEvent : public Event {
 
 class WindowResizeEvent : public Event {
   public:
-    WindowResizeEvent(uint32_t width, uint32_t height) : m_Width(width), m_Height(height) {}
+    WindowResizeEvent(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
 
-    inline uint32_t GetWidth() const { return m_Width; }
-    inline uint32_t GetHeight() const { return m_Height; }
+    inline uint32_t getWidth() const { return m_width; }
+    inline uint32_t getHeight() const { return m_height; }
 
     std::string toString() const override {
-        return std::format("WindowResizeEvent: {}, {}", m_Width, m_Height);
+        return std::format("WindowResizeEvent: {}, {}", m_width, m_height);
     }
 
     EVENT_CLASS_TYPE(WindowResize)
   private:
-    uint32_t m_Width, m_Height;
+    uint32_t m_width, m_height;
 };
 } // namespace mamba
