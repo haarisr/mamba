@@ -1,5 +1,6 @@
 #include "renderer.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "renderer/texture.hpp"
 #include <algorithm>
 #include <array>
 #include <cstdint>
@@ -94,9 +95,7 @@ void Renderer2D::flush() {
 }
 
 void Renderer2D::drawQuad(const glm::mat4& transform, const Texture& texture,
-                          const glm::vec4& tint_color)
-
-{
+                          const glm::vec4& tint_color) {
 
     if (m_quad_vertices.size() >= MAX_VERTICES) {
         nextBatch();
@@ -120,6 +119,11 @@ void Renderer2D::drawQuad(const glm::mat4& transform, const Texture& texture,
                           .tex_index = tex_idx};
         m_quad_vertices.emplace_back(vertex);
     }
+}
+
+void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color) {
+    static auto white = Texture::createWhite();
+    drawQuad(transform, white, color);
 }
 
 int Renderer2D::insertTexture(const Texture& texture) {

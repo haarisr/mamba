@@ -32,6 +32,7 @@ class Renderer2D {
     void setClearColor(const glm::vec4&);
     void setViewPort(uint32_t, uint32_t);
     void drawQuad(const glm::mat4&, const Texture&, const glm::vec4&);
+    void drawQuad(const glm::mat4&, const glm::vec4&);
 
   private:
     int insertTexture(const Texture& texture);
