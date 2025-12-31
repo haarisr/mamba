@@ -1,17 +1,8 @@
-include(FetchContent)
-
-# GLFW
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG        3.4
-)
-
+# GLFW (submodule)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(glfw)
+add_subdirectory(glfw)
 
 # GLAD - OpenGL 4.6 Core (pre-generated)
 add_subdirectory(glad)
@@ -19,11 +10,5 @@ add_subdirectory(glad)
 # stb_image
 add_subdirectory(stb)
 
-# GLM (OpenGL Mathematics)
-FetchContent_Declare(
-    glm
-    GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG        1.0.1
-)
-
-FetchContent_MakeAvailable(glm)
+# GLM (submodule)
+add_subdirectory(glm)
