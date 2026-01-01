@@ -11,6 +11,7 @@ namespace Renderer {
 class Texture {
   public:
     static auto create(const std::filesystem::path& path) -> std::optional<Texture>;
+    static auto create(const uint8_t* data, int width, int height, int channels = 3) -> Texture;
     static auto createWhite() -> Texture;
 
     ~Texture();

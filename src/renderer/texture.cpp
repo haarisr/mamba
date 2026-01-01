@@ -20,11 +20,12 @@ auto Texture::create(const std::filesystem::path& path) -> std::optional<Texture
     }
 
     GLenum format = channels == 4 ? GL_RGBA : channels == 3 ? GL_RGB : channels == 1 ? GL_RED : 0;
+    GLenum internal_format = format == GL_RGBA ? GL_RGBA8 : GL_RGB8;
 
     GLuint handle;
     glCreateTextures(GL_TEXTURE_2D, 1, &handle);
 
-    glTextureStorage2D(handle, 1, (format == GL_RGBA ? GL_RGBA8 : GL_RGB8), width, height);
+    glTextureStorage2D(handle, 1, internal_format, width, height);
     glTextureSubImage2D(handle, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
 
     glTextureParameteri(handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -37,6 +38,27 @@ auto Texture::create(const std::filesystem::path& path) -> std::optional<Texture
 
     stbi_image_free(data);
 
+    return Texture(handle, width, height);
+}
+
+auto Texture::create(const uint8_t* data, int width, int height, int channels) -> Texture {
+
+    GLuint handle;
+    glCreateTextures(GL_TEXTURE_2D, 1, &handle);
+
+    GLenum internal_format = channels == 4 ? GL_RGBA8 : GL_RGB8;
+    GLenum format = channels == 4 ? GL_RGBA : GL_RGB;
+
+    glTextureStorage2D(handle, 1, internal_format, width, height);
+    glTextureSubImage2D(handle, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
+
+    glTextureParameteri(handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTextureParameteri(handle, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTextureParameteri(handle, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTextureParameteri(handle, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glGenerateTextureMipmap(handle);
     return Texture(handle, width, height);
 }
 

@@ -23,12 +23,19 @@ add_subdirectory(freetype)
 # Create alias that msdfgen expects
 add_library(Freetype::Freetype ALIAS freetype)
 
-# msdfgen (submodule) - MSDF font atlas generation
+# msdf-atlas-gen (submodule) - includes msdfgen
+set(MSDF_ATLAS_BUILD_STANDALONE OFF CACHE BOOL "" FORCE)
+set(MSDF_ATLAS_USE_VCPKG OFF CACHE BOOL "" FORCE)
+set(MSDF_ATLAS_USE_SKIA OFF CACHE BOOL "" FORCE)
+set(MSDF_ATLAS_NO_ARTERY_FONT ON CACHE BOOL "" FORCE)
+set(MSDF_ATLAS_INSTALL OFF CACHE BOOL "" FORCE)
+# msdfgen options
 set(MSDFGEN_CORE_ONLY OFF CACHE BOOL "" FORCE)
 set(MSDFGEN_BUILD_STANDALONE OFF CACHE BOOL "" FORCE)
 set(MSDFGEN_USE_VCPKG OFF CACHE BOOL "" FORCE)
+set(MSDFGEN_USE_OPENMP OFF CACHE BOOL "" FORCE)
 set(MSDFGEN_USE_SKIA OFF CACHE BOOL "" FORCE)
 set(MSDFGEN_DISABLE_SVG ON CACHE BOOL "" FORCE)
 set(MSDFGEN_DISABLE_PNG ON CACHE BOOL "" FORCE)
 set(MSDFGEN_INSTALL OFF CACHE BOOL "" FORCE)
-add_subdirectory(msdfgen)
+add_subdirectory(msdf-atlas-gen)

@@ -1,5 +1,6 @@
 add_library(mamba_renderer STATIC
  camera.cpp
+ font.cpp
  renderer.cpp
  shader.cpp
  texture.cpp
@@ -30,4 +31,4 @@ add_custom_command(
 target_sources(mamba_renderer PRIVATE ${SHADER_OUTPUT})
 
 target_include_directories(mamba_renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(mamba_renderer PUBLIC glad glm::glm stb_image)
+target_link_libraries(mamba_renderer PUBLIC glad glm::glm stb_image msdf-atlas-gen::msdf-atlas-gen)
