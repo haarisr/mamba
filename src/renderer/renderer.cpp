@@ -1,4 +1,6 @@
 #include "renderer.hpp"
+#include "generated/shaders.hpp"
+
 #include "glm/gtc/type_ptr.hpp"
 #include "renderer/texture.hpp"
 #include <algorithm>
@@ -37,8 +39,7 @@ Renderer2D::Renderer2D() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Create shader
-    m_shader = Shader::create("src/renderer/shaders/quad.vert", "src/renderer/shaders/quad.frag");
+    m_shader = Shader::createFromSource(Shaders::QUAD_VERT, Shaders::QUAD_FRAG);
     m_quad_vertices.reserve(MAX_VERTICES);
 
     // Create VAO

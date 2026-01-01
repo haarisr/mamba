@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <optional>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -22,10 +23,12 @@ std::string readFile(const std::filesystem::path& path) {
     return stream.str();
 }
 
-GLuint compileShader(const char* source, GLuint shader_type) {
+GLuint compileShader(std::string_view source, GLuint shader_type) {
 
     GLuint shader = glCreateShader(shader_type);
-    glShaderSource(shader, 1, &source, 0);
+    const char* source_ptr = source.data();
+    GLint source_len = static_cast<GLint>(source.size());
+    glShaderSource(shader, 1, &source_ptr, &source_len);
     glCompileShader(shader);
 
     GLint success = 0;
@@ -63,8 +66,13 @@ std::optional<Shader> Shader::create(const std::filesystem::path& vertex_path,
     std::string vertex_shader_src = readFile(vertex_path);
     std::string fragment_shader_src = readFile(fragment_path);
 
-    GLuint vertex_shader = compileShader(vertex_shader_src.c_str(), GL_VERTEX_SHADER);
-    GLuint fragment_shader = compileShader(fragment_shader_src.c_str(), GL_FRAGMENT_SHADER);
+    return createFromSource(vertex_shader_src.c_str(), fragment_shader_src.c_str());
+}
+
+std::optional<Shader> Shader::createFromSource(std::string_view vertex_source,
+                                               std::string_view fragment_source) {
+    GLuint vertex_shader = compileShader(vertex_source, GL_VERTEX_SHADER);
+    GLuint fragment_shader = compileShader(fragment_source, GL_FRAGMENT_SHADER);
 
     // Program linking
     GLuint program = glCreateProgram();

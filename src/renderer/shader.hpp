@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <glad/glad.h>
 #include <optional>
+#include <string_view>
 
 namespace mamba {
 
@@ -20,6 +21,9 @@ struct Shader {
 
     static std::optional<Shader> create(const std::filesystem::path& vertex_path,
                                         const std::filesystem::path& fragment_path);
+
+    static std::optional<Shader> createFromSource(std::string_view vertex_source,
+                                                  std::string_view fragment_source);
 
   private:
     Shader(GLuint program) : m_program(program) {};
