@@ -30,5 +30,24 @@ add_custom_command(
 
 target_sources(mamba_renderer PRIVATE ${SHADER_OUTPUT})
 
+# Embed fonts at build time
+set(FONT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/fonts)
+set(FONT_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/fonts.cpp)
+
+add_custom_command(
+    OUTPUT ${FONT_OUTPUT}
+    COMMAND ${CMAKE_COMMAND}
+        -DFONT_DIR=${FONT_DIR}
+        -DOUTPUT_FILE=${FONT_OUTPUT}
+        -P ${FONT_DIR}/generate_fonts.cmake
+    DEPENDS
+        ${FONT_DIR}/Roboto-Regular.ttf
+        ${FONT_DIR}/fonts.cpp.in
+        ${FONT_DIR}/generate_fonts.cmake
+    COMMENT "Generating fonts.cpp"
+)
+
+target_sources(mamba_renderer PRIVATE ${FONT_OUTPUT})
+
 target_include_directories(mamba_renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(mamba_renderer PUBLIC glad glm::glm stb_image msdf-atlas-gen::msdf-atlas-gen)

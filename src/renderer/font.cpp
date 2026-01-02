@@ -1,6 +1,7 @@
 
 #include "font.hpp"
 #include "ext/import-font.h"
+#include "fonts/fonts.hpp"
 #include "msdf-atlas-gen/FontGeometry.h"
 #include "renderer/texture.hpp"
 #include <cstdint>
@@ -17,7 +18,7 @@ Font Font::create() {
     auto ft = msdfgen::initializeFreetype();
     if (!ft)
         throw std::runtime_error("Cannot load freetype");
-    auto font = msdfgen::loadFont(ft, "src/renderer/fonts/Roboto-Regular.ttf");
+    auto font = msdfgen::loadFontData(ft, Fonts::ROBOTO.data(), Fonts::ROBOTO.size());
     if (!font)
         throw std::runtime_error("Cannot load font");
 
