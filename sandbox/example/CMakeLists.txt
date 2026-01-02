@@ -7,9 +7,9 @@ target_compile_options(example PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )
 
-# Copy textures to build directory
+# Copy app assets to build directory
 add_custom_command(TARGET example POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/sandbox/example/textures
-        $<TARGET_FILE_DIR:example>/sandbox/example/textures
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets
+        $<TARGET_FILE_DIR:example>/assets
 )

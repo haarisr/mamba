@@ -4,12 +4,12 @@
 #include "color_layers.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/trigonometric.hpp"
-#include <print>
 
 ButtonLayer::ButtonLayer() {
     using namespace ::mamba::Renderer;
     // Load texture
-    m_texture = Texture::create("sandbox/example/textures/Button.png");
+    m_texture = Texture::create("sandbox/example/assets/textures/Button.png");
+    m_font = Font::create();
 }
 
 void ButtonLayer::onUpdate(float /*dt*/) {
@@ -64,5 +64,9 @@ void ButtonLayer::onRender() {
     renderer.begin(*m_camera);
     auto tint = m_is_hovered ? glm::vec4(2.0, 2.0, 2.0, 1.0) : glm::vec4(1.0, 1.0, 1.0, 1.0);
     renderer.drawQuad(model, m_texture.value(), tint);
+
+    // Draw text
+    renderer.drawText("Hello Mamba!", *m_font, {50.0f, 500.0f}, 48.0f, {1.0f, 1.0f, 1.0f, 1.0f});
+
     renderer.end();
 }

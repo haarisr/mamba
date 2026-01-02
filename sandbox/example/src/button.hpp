@@ -7,6 +7,7 @@
 
 #include "layer.hpp"
 #include "renderer/camera.hpp"
+#include "renderer/font.hpp"
 #include "renderer/texture.hpp"
 
 class ButtonLayer : public mamba::Layer {
@@ -19,6 +20,7 @@ class ButtonLayer : public mamba::Layer {
 
   private:
     std::optional<mamba::Renderer::Texture> m_texture;
+    std::optional<mamba::Renderer::Font> m_font;
     std::unique_ptr<mamba::OrthographicCamera> m_camera;
 
     // Button properties in pixels

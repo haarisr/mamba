@@ -9,4 +9,8 @@ constexpr std::string_view QUAD_VERT = R"(@QUAD_VERT_SOURCE@)";
 
 constexpr std::string_view QUAD_FRAG = R"(@QUAD_FRAG_SOURCE@)";
 
+constexpr std::string_view TEXT_VERT = R"(@TEXT_VERT_SOURCE@)";
+
+constexpr std::string_view TEXT_FRAG = R"(@TEXT_FRAG_SOURCE@)";
+
 } // namespace mamba::Renderer::Shaders

@@ -7,6 +7,7 @@ class Font {
   public:
     static Font create();
     const Texture& getAtlasTexture() const { return m_texture; }
+    const msdf_atlas::FontGeometry& getFontGeometry() const { return m_font_geometry; }
 
   private:
     Font(Texture&& texture, msdf_atlas::FontGeometry&& geometry)
