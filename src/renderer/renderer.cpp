@@ -1,5 +1,5 @@
 #include "renderer.hpp"
-#include "generated/shaders.hpp"
+#include "shaders/shaders.hpp"
 
 #include "glm/gtc/type_ptr.hpp"
 #include "renderer/font.hpp"

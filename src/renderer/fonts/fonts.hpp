@@ -4,6 +4,11 @@
 
 namespace mamba::Renderer::Fonts {
 
-extern const std::span<const uint8_t> ROBOTO;
+inline constexpr auto ROBOTO = [] {
+    static constexpr uint8_t data[] = {
+#embed "Roboto-Regular.ttf"
+    };
+    return std::span<const uint8_t>{data};
+}();
 
 } // namespace mamba::Renderer::Fonts
