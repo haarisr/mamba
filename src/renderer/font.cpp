@@ -36,10 +36,13 @@ Font Font::create() {
     msdf_atlas::FontGeometry font_geometry;
     font_geometry.loadCharset(font, 1.0, msdf_atlas::Charset::ASCII);
 
-    // // Apply MSDF edge coloring. See edge-coloring.h for other coloring strategies.
-    // const double maxCornerAngle = 3.0;
-    // for (GlyphGeometry& glyph : glyphs)
-    //     glyph.edgeColoring(&msdfgen::edgeColoringInkTrap, maxCornerAngle, 0);
+    const auto& glyphs = font_geometry.getGlyphs();
+
+    // Apply MSDF edge coloring. See edge-coloring.h for other coloring strategies.
+    const double maxCornerAngle = 3.0;
+    for (const msdf_atlas::GlyphGeometry& glyph : glyphs)
+        const_cast<msdf_atlas::GlyphGeometry&>(glyph).edgeColoring(&msdfgen::edgeColoringInkTrap,
+                                                                   maxCornerAngle, 0);
 
     // TightAtlasPacker class computes the layout of the atlas.
     msdf_atlas::TightAtlasPacker packer;
@@ -50,7 +53,6 @@ Font Font::create() {
     packer.setMiterLimit(1.0);
     // Compute atlas layout - pack glyphs
 
-    const auto& glyphs = font_geometry.getGlyphs();
     packer.pack(const_cast<msdf_atlas::GlyphGeometry*>(glyphs.begin()), glyphs.size());
 
     // Get final atlas dimensions
