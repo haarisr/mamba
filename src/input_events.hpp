@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event.hpp"
+#include "input.hpp"
 
 #include <format>
 
@@ -12,22 +13,24 @@ namespace mamba {
 
 class KeyEvent : public Event {
   public:
-    inline int getKeyCode() const { return m_key_code; }
+    inline Key getKeyCode() const { return m_key_code; }
 
   protected:
-    KeyEvent(int keycode) : m_key_code(keycode) {}
+    KeyEvent(Key keycode) : m_key_code(keycode) {}
 
-    int m_key_code;
+    Key m_key_code;
 };
 
 class KeyPressedEvent : public KeyEvent {
   public:
-    KeyPressedEvent(int keycode, bool is_repeat) : KeyEvent(keycode), m_is_repeat(is_repeat) {}
+    KeyPressedEvent(int keycode, bool is_repeat)
+        : KeyEvent(static_cast<Key>(keycode)), m_is_repeat(is_repeat) {}
 
     inline bool isRepeat() const { return m_is_repeat; }
 
     std::string toString() const override {
-        return std::format("KeyPressedEvent: {} (repeat={})", m_key_code, m_is_repeat);
+        return std::format("KeyPressedEvent: {} (repeat={})", static_cast<int>(m_key_code),
+                           m_is_repeat);
     }
 
     EVENT_CLASS_TYPE(KeyPressed)
@@ -37,9 +40,11 @@ class KeyPressedEvent : public KeyEvent {
 
 class KeyReleasedEvent : public KeyEvent {
   public:
-    KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
+    KeyReleasedEvent(int keycode) : KeyEvent(static_cast<Key>(keycode)) {}
 
-    std::string toString() const override { return std::format("KeyReleasedEvent: {}", m_key_code); }
+    std::string toString() const override {
+        return std::format("KeyReleasedEvent: {}", static_cast<int>(m_key_code));
+    }
 
     EVENT_CLASS_TYPE(KeyReleased)
 };
@@ -66,7 +71,8 @@ class MouseMovedEvent : public Event {
 
 class MouseScrolledEvent : public Event {
   public:
-    MouseScrolledEvent(double x_offset, double y_offset) : m_x_offset(x_offset), m_y_offset(y_offset) {}
+    MouseScrolledEvent(double x_offset, double y_offset)
+        : m_x_offset(x_offset), m_y_offset(y_offset) {}
 
     inline double getXOffset() const { return m_x_offset; }
     inline double getYOffset() const { return m_y_offset; }
@@ -82,20 +88,20 @@ class MouseScrolledEvent : public Event {
 
 class MouseButtonEvent : public Event {
   public:
-    inline int getMouseButton() const { return m_button; }
+    inline MouseButton getMouseButton() const { return m_button; }
 
   protected:
-    MouseButtonEvent(int button) : m_button(button) {}
+    MouseButtonEvent(MouseButton button) : m_button(button) {}
 
-    int m_button;
+    MouseButton m_button;
 };
 
 class MouseButtonPressedEvent : public MouseButtonEvent {
   public:
-    MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
+    MouseButtonPressedEvent(int button) : MouseButtonEvent(static_cast<MouseButton>(button)) {}
 
     std::string toString() const override {
-        return std::format("MouseButtonPressedEvent: {}", m_button);
+        return std::format("MouseButtonPressedEvent: {}", static_cast<int>(m_button));
     }
 
     EVENT_CLASS_TYPE(MouseButtonPressed)
@@ -103,10 +109,10 @@ class MouseButtonPressedEvent : public MouseButtonEvent {
 
 class MouseButtonReleasedEvent : public MouseButtonEvent {
   public:
-    MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
+    MouseButtonReleasedEvent(int button) : MouseButtonEvent(static_cast<MouseButton>(button)) {}
 
     std::string toString() const override {
-        return std::format("MouseButtonReleasedEvent: {}", m_button);
+        return std::format("MouseButtonReleasedEvent: {}", static_cast<int>(m_button));
     }
 
     EVENT_CLASS_TYPE(MouseButtonReleased)

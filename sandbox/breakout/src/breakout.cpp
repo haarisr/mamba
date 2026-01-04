@@ -1,6 +1,5 @@
 #include "breakout.hpp"
 
-#include <GLFW/glfw3.h>
 #include <algorithm>
 #include <cmath>
 #include <format>
@@ -108,10 +107,10 @@ void BreakoutLayer::updatePaddle(float dt) {
     auto& window = getApp()->getWindow();
 
     float move = 0.0f;
-    if (window.isKeyDown(GLFW_KEY_LEFT) || window.isKeyDown(GLFW_KEY_A)) {
+    if (window.isKeyDown(mamba::Key::Left) || window.isKeyDown(mamba::Key::A)) {
         move -= m_paddle.speed * dt;
     }
-    if (window.isKeyDown(GLFW_KEY_RIGHT) || window.isKeyDown(GLFW_KEY_D)) {
+    if (window.isKeyDown(mamba::Key::Right) || window.isKeyDown(mamba::Key::D)) {
         move += m_paddle.speed * dt;
     }
 
@@ -244,9 +243,9 @@ bool BreakoutLayer::checkAABB(const glm::vec2& pos1, const glm::vec2& size1, con
 void BreakoutLayer::onEvent(mamba::Event& event) {
     if (event.getEventType() == mamba::EventType::KeyPressed) {
         auto& key_event = static_cast<mamba::KeyPressedEvent&>(event);
-        int key = key_event.getKeyCode();
+        auto key = key_event.getKeyCode();
 
-        if (key == GLFW_KEY_SPACE) {
+        if (key == mamba::Key::Space) {
             if (m_ball.stuck && m_state == GameState::Playing) {
                 m_ball.stuck = false;
             }
@@ -255,7 +254,7 @@ void BreakoutLayer::onEvent(mamba::Event& event) {
                 initGame();
             }
         }
-        if (key == GLFW_KEY_ESCAPE) {
+        if (key == mamba::Key::Escape) {
             // Reset game
             initGame();
         }

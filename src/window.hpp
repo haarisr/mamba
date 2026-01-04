@@ -1,16 +1,15 @@
 #pragma once
 
 #include "event.hpp"
+#include "input.hpp"
 
 #include <cstdint>
 #include <functional>
 #include <string>
 
-// clang-format off
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-// clang-format on
 #include <glm/glm.hpp>
+
+struct GLFWwindow;
 
 namespace mamba {
 
@@ -33,8 +32,8 @@ class Window {
 
     glm::vec2 getFrameBufferSize() const;
     glm::vec2 getMousePosition() const;
-    bool isKeyDown(int key) const;
-    bool isMouseButtonDown(int button) const;
+    bool isKeyDown(Key) const;
+    bool isMouseButtonDown(MouseButton) const;
 
   private:
     GLFWwindow* m_handle;

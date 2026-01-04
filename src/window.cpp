@@ -1,11 +1,16 @@
 #include "window.hpp"
-#include "GLFW/glfw3.h"
 #include "event.hpp"
-#include "glm/ext/vector_float2.hpp"
+#include "input.hpp"
 #include "input_events.hpp"
 #include "window_events.hpp"
 
 #include <iostream>
+
+// clang-format off
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
+#include <glm/ext/vector_float2.hpp>
 
 namespace mamba {
 
@@ -129,10 +134,12 @@ glm::vec2 Window::getMousePosition() const {
     return {x, y};
 }
 
-bool Window::isKeyDown(int key) const { return glfwGetKey(m_handle, key) == GLFW_PRESS; }
+bool Window::isKeyDown(Key key) const {
+    return glfwGetKey(m_handle, static_cast<int>(key)) == GLFW_PRESS;
+}
 
-bool Window::isMouseButtonDown(int button) const {
-    return glfwGetMouseButton(m_handle, button) == GLFW_PRESS;
+bool Window::isMouseButtonDown(MouseButton button) const {
+    return glfwGetMouseButton(m_handle, static_cast<int>(button)) == GLFW_PRESS;
 }
 
 } // namespace mamba
