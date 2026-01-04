@@ -6,6 +6,7 @@
 
 #include "app.hpp"
 #include "input_events.hpp"
+#include "physics/collision.hpp"
 
 // Colors for brick rows
 static const glm::vec4 BRICK_COLORS[] = {
@@ -158,15 +159,17 @@ void BreakoutLayer::updateBall(float dt) {
 }
 
 void BreakoutLayer::checkCollisions() {
+    using namespace mamba::physics;
+
     if (m_ball.stuck) {
         return;
     }
 
     // Ball vs Paddle collision
-    glm::vec2 ball_box_pos = m_ball.position;
-    glm::vec2 ball_box_size = {m_ball.radius * 2.0f, m_ball.radius * 2.0f};
+    AABB ball_box{m_ball.position, {m_ball.radius * 2.0f, m_ball.radius * 2.0f}};
+    AABB paddle_box{m_paddle.position, m_paddle.size};
 
-    if (checkAABB(ball_box_pos, ball_box_size, m_paddle.position, m_paddle.size)) {
+    if (collides(ball_box, paddle_box)) {
         // Only bounce if ball is moving downward
         if (m_ball.velocity.y < 0.0f) {
             m_ball.velocity.y = std::abs(m_ball.velocity.y);
@@ -188,7 +191,9 @@ void BreakoutLayer::checkCollisions() {
             continue;
         }
 
-        if (checkAABB(ball_box_pos, ball_box_size, brick.position, brick.size)) {
+        AABB brick_box{brick.position, brick.size};
+
+        if (collides(ball_box, brick_box)) {
             brick.hits--;
             if (brick.hits <= 0) {
                 brick.destroyed = true;
@@ -226,18 +231,6 @@ void BreakoutLayer::checkCollisions() {
             break; // Only handle one brick collision per frame
         }
     }
-}
-
-bool BreakoutLayer::checkAABB(const glm::vec2& pos1, const glm::vec2& size1, const glm::vec2& pos2,
-                              const glm::vec2& size2) {
-    // Positions are centers, sizes are full width/height
-    glm::vec2 half1 = size1 / 2.0f;
-    glm::vec2 half2 = size2 / 2.0f;
-
-    bool x_overlap = pos1.x - half1.x < pos2.x + half2.x && pos1.x + half1.x > pos2.x - half2.x;
-    bool y_overlap = pos1.y - half1.y < pos2.y + half2.y && pos1.y + half1.y > pos2.y - half2.y;
-
-    return x_overlap && y_overlap;
 }
 
 void BreakoutLayer::onEvent(mamba::Event& event) {

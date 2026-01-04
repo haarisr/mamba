@@ -48,8 +48,6 @@ class BreakoutLayer : public mamba::Layer {
     void updatePaddle(float dt);
     void updateBall(float dt);
     void checkCollisions();
-    bool checkAABB(const glm::vec2& pos1, const glm::vec2& size1, const glm::vec2& pos2,
-                   const glm::vec2& size2);
 
     // Camera
     std::unique_ptr<mamba::OrthographicCamera> m_camera;
