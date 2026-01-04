@@ -1,12 +1,12 @@
-
 #include "font.hpp"
-#include "ext/import-font.h"
 #include "fonts/fonts.hpp"
-#include "msdf-atlas-gen/FontGeometry.h"
 #include "renderer/texture.hpp"
+
 #include <cstdint>
+#include <span>
 #include <stdexcept>
 
+#include <msdf-atlas-gen/FontGeometry.h>
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 #include <msdfgen-ext.h>
 #include <msdfgen.h>
@@ -36,13 +36,15 @@ Font Font::create() {
     msdf_atlas::FontGeometry font_geometry;
     font_geometry.loadCharset(font, 1.0, msdf_atlas::Charset::ASCII);
 
-    const auto& glyphs = font_geometry.getGlyphs();
+    // Get mutable access to glyphs for edge coloring
+    auto glyph_range = font_geometry.getGlyphs();
+    auto* temp = const_cast<msdf_atlas::GlyphGeometry*>(glyph_range.begin());
+    std::span<msdf_atlas::GlyphGeometry> glyphs{temp, glyph_range.size()};
 
     // Apply MSDF edge coloring. See edge-coloring.h for other coloring strategies.
     const double maxCornerAngle = 3.0;
-    for (const msdf_atlas::GlyphGeometry& glyph : glyphs)
-        const_cast<msdf_atlas::GlyphGeometry&>(glyph).edgeColoring(&msdfgen::edgeColoringInkTrap,
-                                                                   maxCornerAngle, 0);
+    for (auto& glyph : glyphs)
+        glyph.edgeColoring(&msdfgen::edgeColoringInkTrap, maxCornerAngle, 0);
 
     // TightAtlasPacker class computes the layout of the atlas.
     msdf_atlas::TightAtlasPacker packer;
@@ -52,8 +54,7 @@ Font Font::create() {
     packer.setPixelRange(2.0);
     packer.setMiterLimit(1.0);
     // Compute atlas layout - pack glyphs
-
-    packer.pack(const_cast<msdf_atlas::GlyphGeometry*>(glyphs.begin()), glyphs.size());
+    packer.pack(glyphs.data(), glyphs.size());
 
     // Get final atlas dimensions
     int width = 0, height = 0;
@@ -73,7 +74,7 @@ Font Font::create() {
     generator.setAttributes(attributes);
     generator.setThreadCount(4);
     // Generate atlas bitmap
-    generator.generate(glyphs.begin(), glyphs.size());
+    generator.generate(glyphs.data(), glyphs.size());
 
     const auto& bitmap = static_cast<msdfgen::BitmapConstRef<uint8_t, 4>>(generator.atlasStorage());
 

@@ -52,6 +52,7 @@ void ButtonLayer::onEvent(mamba::Event& event) {
 }
 
 void ButtonLayer::onRender() {
+    glm::vec2 framebuffer_size = getApp()->getWindow().getFrameBufferSize();
 
     // Model matrix: position and scale the button
     glm::mat4 model(1.0f);
@@ -64,6 +65,14 @@ void ButtonLayer::onRender() {
     renderer.begin(*m_camera);
     auto tint = m_is_hovered ? glm::vec4(2.0, 2.0, 2.0, 1.0) : glm::vec4(1.0, 1.0, 1.0, 1.0);
     renderer.drawQuad(model, m_texture.value(), tint);
+
+    // Draw font atlas centered on screen
+    const auto& atlas = m_font->getAtlasTexture();
+    glm::mat4 atlas_model(1.0f);
+    atlas_model = glm::translate(
+        atlas_model, glm::vec3(framebuffer_size.x / 2.0f, framebuffer_size.y / 2.0f, 0.0f));
+    atlas_model = glm::scale(atlas_model, glm::vec3(atlas.width(), atlas.height(), 1.0f));
+    renderer.drawQuad(atlas_model, atlas, {1.0f, 1.0f, 1.0f, 1.0f});
 
     // Draw text
     renderer.drawText("Hello Mamba!", *m_font, {50.0f, 500.0f}, 48.0f, {1.0f, 1.0f, 1.0f, 1.0f});
