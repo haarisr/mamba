@@ -33,6 +33,8 @@ class Window {
 
     glm::vec2 getFrameBufferSize() const;
     glm::vec2 getMousePosition() const;
+    bool isKeyDown(int key) const;
+    bool isMouseButtonDown(int button) const;
 
   private:
     GLFWwindow* m_handle;

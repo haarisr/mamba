@@ -129,4 +129,10 @@ glm::vec2 Window::getMousePosition() const {
     return {x, y};
 }
 
+bool Window::isKeyDown(int key) const { return glfwGetKey(m_handle, key) == GLFW_PRESS; }
+
+bool Window::isMouseButtonDown(int button) const {
+    return glfwGetMouseButton(m_handle, button) == GLFW_PRESS;
+}
+
 } // namespace mamba

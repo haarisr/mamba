@@ -105,11 +105,13 @@ void BreakoutLayer::onUpdate(float dt) {
 }
 
 void BreakoutLayer::updatePaddle(float dt) {
+    auto& window = getApp()->getWindow();
+
     float move = 0.0f;
-    if (m_key_left) {
+    if (window.isKeyDown(GLFW_KEY_LEFT) || window.isKeyDown(GLFW_KEY_A)) {
         move -= m_paddle.speed * dt;
     }
-    if (m_key_right) {
+    if (window.isKeyDown(GLFW_KEY_RIGHT) || window.isKeyDown(GLFW_KEY_D)) {
         move += m_paddle.speed * dt;
     }
 
@@ -240,17 +242,10 @@ bool BreakoutLayer::checkAABB(const glm::vec2& pos1, const glm::vec2& size1, con
 }
 
 void BreakoutLayer::onEvent(mamba::Event& event) {
-    // Track key states for smooth movement
     if (event.getEventType() == mamba::EventType::KeyPressed) {
         auto& key_event = static_cast<mamba::KeyPressedEvent&>(event);
         int key = key_event.getKeyCode();
 
-        if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A) {
-            m_key_left = true;
-        }
-        if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D) {
-            m_key_right = true;
-        }
         if (key == GLFW_KEY_SPACE) {
             if (m_ball.stuck && m_state == GameState::Playing) {
                 m_ball.stuck = false;
@@ -263,18 +258,6 @@ void BreakoutLayer::onEvent(mamba::Event& event) {
         if (key == GLFW_KEY_ESCAPE) {
             // Reset game
             initGame();
-        }
-    }
-
-    if (event.getEventType() == mamba::EventType::KeyReleased) {
-        auto& key_event = static_cast<mamba::KeyReleasedEvent&>(event);
-        int key = key_event.getKeyCode();
-
-        if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A) {
-            m_key_left = false;
-        }
-        if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D) {
-            m_key_right = false;
         }
     }
 }

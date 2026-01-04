@@ -67,11 +67,6 @@ class BreakoutLayer : public mamba::Layer {
     int m_score{0};
     int m_lives{3};
 
-    // Input state (tracked via events since we're not modifying engine)
-    bool m_key_left{false};
-    bool m_key_right{false};
-    bool m_key_space{false};
-
     // Font for UI
     std::optional<mamba::Renderer::Font> m_font;
 
