@@ -51,6 +51,8 @@ class Renderer2D {
     void flush();
 
   private:
+    std::optional<mamba::Renderer::Texture> m_white_texture;
+
     // Quad rendering
     std::optional<mamba::Renderer::Shader> m_shader;
     std::optional<mamba::Renderer::IndexBuffer> m_ebo;

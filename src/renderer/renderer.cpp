@@ -86,6 +86,8 @@ Renderer2D::Renderer2D() {
         glUniform1i(1, 0);
         m_text_shader->unbind();
     }
+
+    m_white_texture = Texture::createWhite();
 }
 
 void Renderer2D::begin(const OrthographicCamera& camera) {
@@ -170,8 +172,7 @@ void Renderer2D::drawQuad(const glm::mat4& transform, const Texture& texture,
 }
 
 void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color) {
-    static auto white = Texture::createWhite();
-    drawQuad(transform, white, color);
+    drawQuad(transform, *m_white_texture, color);
 }
 
 int Renderer2D::insertTexture(const Texture& texture) {
