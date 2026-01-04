@@ -166,10 +166,10 @@ void BreakoutLayer::checkCollisions() {
     }
 
     // Ball vs Paddle collision
-    AABB ball_box{m_ball.position, {m_ball.radius * 2.0f, m_ball.radius * 2.0f}};
+    Circle ball{m_ball.position, m_ball.radius};
     AABB paddle_box{m_paddle.position, m_paddle.size};
 
-    if (collides(ball_box, paddle_box)) {
+    if (collides(ball, paddle_box)) {
         // Only bounce if ball is moving downward
         if (m_ball.velocity.y < 0.0f) {
             m_ball.velocity.y = std::abs(m_ball.velocity.y);
@@ -193,7 +193,7 @@ void BreakoutLayer::checkCollisions() {
 
         AABB brick_box{brick.position, brick.size};
 
-        if (collides(ball_box, brick_box)) {
+        if (collides(ball, brick_box)) {
             brick.hits--;
             if (brick.hits <= 0) {
                 brick.destroyed = true;
