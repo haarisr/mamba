@@ -41,6 +41,9 @@ class Renderer2D {
     void setViewPort(uint32_t, uint32_t);
     void drawQuad(const glm::mat4&, const Texture&, const glm::vec4&);
     void drawQuad(const glm::mat4&, const glm::vec4&);
+    void drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+    void drawQuad(const glm::vec2& position, const glm::vec2& size, const Texture& texture,
+                  const glm::vec4& tint);
     void drawText(std::string_view text, const Font& font, const glm::vec2& position, float scale,
                   const glm::vec4& color);
 

@@ -51,9 +51,6 @@ class BreakoutLayer : public mamba::Layer {
     bool checkAABB(const glm::vec2& pos1, const glm::vec2& size1, const glm::vec2& pos2,
                    const glm::vec2& size2);
 
-    // Rendering helpers
-    void drawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
-
     // Camera
     std::unique_ptr<mamba::OrthographicCamera> m_camera;
 

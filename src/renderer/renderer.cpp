@@ -175,6 +175,22 @@ void Renderer2D::drawQuad(const glm::mat4& transform, const glm::vec4& color) {
     drawQuad(transform, *m_white_texture, color);
 }
 
+void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec2& size,
+                          const glm::vec4& color) {
+    glm::mat4 transform(1.0f);
+    transform = glm::translate(transform, glm::vec3(position, 0.0f));
+    transform = glm::scale(transform, glm::vec3(size, 1.0f));
+    drawQuad(transform, color);
+}
+
+void Renderer2D::drawQuad(const glm::vec2& position, const glm::vec2& size, const Texture& texture,
+                          const glm::vec4& tint) {
+    glm::mat4 transform(1.0f);
+    transform = glm::translate(transform, glm::vec3(position, 0.0f));
+    transform = glm::scale(transform, glm::vec3(size, 1.0f));
+    drawQuad(transform, texture, tint);
+}
+
 int Renderer2D::insertTexture(const Texture& texture) {
 
     auto end = m_texture_slots.begin() + m_texture_idx;

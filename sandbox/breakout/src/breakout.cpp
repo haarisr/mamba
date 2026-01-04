@@ -262,15 +262,6 @@ void BreakoutLayer::onEvent(mamba::Event& event) {
     }
 }
 
-void BreakoutLayer::drawRect(const glm::vec2& position, const glm::vec2& size,
-                             const glm::vec4& color) {
-    glm::mat4 model(1.0f);
-    model = glm::translate(model, glm::vec3(position, 0.0f));
-    model = glm::scale(model, glm::vec3(size, 1.0f));
-
-    getApp()->getRenderer().drawQuad(model, color);
-}
-
 void BreakoutLayer::onRender() {
     auto& renderer = getApp()->getRenderer();
 
@@ -287,15 +278,15 @@ void BreakoutLayer::onRender() {
     // Draw bricks
     for (const auto& brick : m_bricks) {
         if (!brick.destroyed) {
-            drawRect(brick.position, brick.size, brick.color);
+            renderer.drawQuad(brick.position, brick.size, brick.color);
         }
     }
 
     // Draw paddle
-    drawRect(m_paddle.position, m_paddle.size, PADDLE_COLOR);
+    renderer.drawQuad(m_paddle.position, m_paddle.size, PADDLE_COLOR);
 
     // Draw ball (as a small square for now)
-    drawRect(m_ball.position, {m_ball.radius * 2.0f, m_ball.radius * 2.0f}, BALL_COLOR);
+    renderer.drawQuad(m_ball.position, {m_ball.radius * 2.0f, m_ball.radius * 2.0f}, BALL_COLOR);
 
     // Draw UI text
     if (m_font) {
