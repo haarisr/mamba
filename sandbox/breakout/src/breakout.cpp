@@ -169,19 +169,18 @@ void BreakoutLayer::checkCollisions() {
     Circle ball{m_ball.position, m_ball.radius};
     AABB paddle_box{m_paddle.position, m_paddle.size};
 
-    if (collides(ball, paddle_box)) {
+    if (auto hit = collides(ball, paddle_box)) {
         // Only bounce if ball is moving downward
         if (m_ball.velocity.y < 0.0f) {
             m_ball.velocity.y = std::abs(m_ball.velocity.y);
 
             // Add some angle based on where ball hit paddle
-            float paddle_center = m_paddle.position.x;
-            float hit_point = m_ball.position.x - paddle_center;
+            float hit_point = m_ball.position.x - m_paddle.position.x;
             float normalized = hit_point / (m_paddle.size.x / 2.0f); // -1 to 1
             m_ball.velocity.x = normalized * 300.0f;
 
-            // Ensure ball is above paddle
-            m_ball.position.y = m_paddle.position.y + m_paddle.size.y / 2.0f + m_ball.radius;
+            // Push ball out of paddle
+            m_ball.position -= hit->normal * hit->penetration;
         }
     }
 
@@ -193,7 +192,7 @@ void BreakoutLayer::checkCollisions() {
 
         AABB brick_box{brick.position, brick.size};
 
-        if (collides(ball, brick_box)) {
+        if (auto hit = collides(ball, brick_box)) {
             brick.hits--;
             if (brick.hits <= 0) {
                 brick.destroyed = true;
@@ -201,32 +200,16 @@ void BreakoutLayer::checkCollisions() {
             }
 
             // Determine collision side and bounce
-            glm::vec2 brick_half = brick.size / 2.0f;
-            glm::vec2 ball_center = m_ball.position;
-            glm::vec2 brick_center = brick.position;
-
-            glm::vec2 diff = ball_center - brick_center;
-            glm::vec2 clamped = glm::clamp(diff, -brick_half, brick_half);
-            glm::vec2 closest = brick_center + clamped;
-            glm::vec2 penetration = ball_center - closest;
-
-            if (std::abs(penetration.x) > std::abs(penetration.y)) {
+            if (std::abs(hit->normal.x) > std::abs(hit->normal.y)) {
                 // Horizontal collision
                 m_ball.velocity.x = -m_ball.velocity.x;
-                if (penetration.x > 0) {
-                    m_ball.position.x = brick.position.x + brick_half.x + m_ball.radius;
-                } else {
-                    m_ball.position.x = brick.position.x - brick_half.x - m_ball.radius;
-                }
             } else {
                 // Vertical collision
                 m_ball.velocity.y = -m_ball.velocity.y;
-                if (penetration.y > 0) {
-                    m_ball.position.y = brick.position.y + brick_half.y + m_ball.radius;
-                } else {
-                    m_ball.position.y = brick.position.y - brick_half.y - m_ball.radius;
-                }
             }
+
+            // Push ball out of brick
+            m_ball.position -= hit->normal * hit->penetration;
 
             break; // Only handle one brick collision per frame
         }
