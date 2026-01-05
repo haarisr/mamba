@@ -31,6 +31,12 @@ class Renderer2D {
         glm::vec4 color;
     };
 
+    struct CircleVertex {
+        glm::vec4 world_position;
+        glm::vec4 local_position;
+        glm::vec4 color;
+    };
+
   public:
     Renderer2D();
 
@@ -46,6 +52,7 @@ class Renderer2D {
                   const glm::vec4& tint);
     void drawText(std::string_view text, const Font& font, const glm::vec2& position, float scale,
                   const glm::vec4& color);
+    void drawCircle(const glm::mat4& transform, const glm::vec4& color);
 
   private:
     int insertTexture(const Texture& texture);
@@ -71,6 +78,12 @@ class Renderer2D {
     mamba::Renderer::VertexArray m_text_vao;
     std::vector<TextVertex> m_text_vertices;
     GLuint m_text_texture_slot;
+
+    // Circle rendering
+    std::optional<mamba::Renderer::Shader> m_circle_shader;
+    std::optional<mamba::Renderer::VertexBuffer<CircleVertex>> m_circle_vbo;
+    mamba::Renderer::VertexArray m_circle_vao;
+    std::vector<CircleVertex> m_circle_vertices;
 };
 
 } // namespace Renderer

@@ -31,4 +31,18 @@ inline constexpr auto TEXT_FRAG = [] {
     return std::string_view{data};
 }();
 
+inline constexpr auto CIRCLE_VERT = [] {
+    static constexpr char data[] = {
+#embed "circle.vert" suffix(, '\0')
+    };
+    return std::string_view{data};
+}();
+
+inline constexpr auto CIRCLE_FRAG = [] {
+    static constexpr char data[] = {
+#embed "circle.frag" suffix(, '\0')
+    };
+    return std::string_view{data};
+}();
+
 } // namespace mamba::Renderer::Shaders

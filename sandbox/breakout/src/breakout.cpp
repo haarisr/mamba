@@ -261,7 +261,11 @@ void BreakoutLayer::onRender() {
     renderer.drawQuad(m_paddle.position, m_paddle.size, PADDLE_COLOR);
 
     // Draw ball (as a small square for now)
-    renderer.drawQuad(m_ball.position, {m_ball.radius * 2.0f, m_ball.radius * 2.0f}, BALL_COLOR);
+    // renderer.drawQuad(m_ball.position, {m_ball.radius * 2.0f, m_ball.radius * 2.0f}, BALL_COLOR);
+    glm::mat4 transform(1.0f);
+    transform = glm::translate(transform, glm::vec3(m_ball.position, 0.0f));
+    transform = glm::scale(transform, glm::vec3(m_ball.radius * 2.0f, m_ball.radius * 2.0f, 1.0f));
+    renderer.drawCircle(transform, BALL_COLOR);
 
     // Draw UI text
     if (m_font) {

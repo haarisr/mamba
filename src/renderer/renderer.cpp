@@ -42,8 +42,10 @@ Renderer2D::Renderer2D() {
 
     m_shader = Shader::createFromSource(Shaders::QUAD_VERT, Shaders::QUAD_FRAG);
     m_text_shader = Shader::createFromSource(Shaders::TEXT_VERT, Shaders::TEXT_FRAG);
+    m_circle_shader = Shader::createFromSource(Shaders::CIRCLE_VERT, Shaders::CIRCLE_FRAG);
     m_quad_vertices.reserve(MAX_VERTICES);
     m_text_vertices.reserve(MAX_VERTICES);
+    m_circle_vertices.reserve(MAX_VERTICES);
 
     // Create shared EBO
     m_ebo.emplace(getIndices());
@@ -76,6 +78,19 @@ Renderer2D::Renderer2D() {
     }
 
     {
+        mamba::Renderer::VertexLayout layout = {
+
+            {ShaderDataType::Float4, 0},
+            {ShaderDataType::Float4, 1},
+            {ShaderDataType::Float4, 2},
+        };
+        VertexBuffer<CircleVertex> buffer{MAX_VERTICES};
+        m_circle_vbo.emplace(std::move(buffer));
+        m_circle_vao.addVertexBuffer(*m_circle_vbo, layout);
+        m_circle_vao.addIndexBuffer(*m_ebo);
+    }
+
+    {
         m_shader->bind();
         glUniform1iv(1, MAX_TEXTURES, getSamplers().data());
         m_shader->unbind();
@@ -100,6 +115,10 @@ void Renderer2D::begin(const OrthographicCamera& camera) {
     m_text_shader->bind();
     glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(vp));
     m_text_shader->unbind();
+
+    m_circle_shader->bind();
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(vp));
+    m_circle_shader->unbind();
 
     startBatch();
 }
@@ -141,6 +160,45 @@ void Renderer2D::flush() {
         glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, nullptr);
         m_text_vao.unbind();
         m_text_shader->unbind();
+    }
+
+    {
+        // if (m_text_vertices.empty())
+        //     return;
+
+        m_circle_shader->bind();
+        m_circle_vao.bind();
+
+        m_circle_vbo->update(m_circle_vertices);
+        auto indices_count = m_circle_vertices.size() / 4 * 6;
+
+        glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, nullptr);
+        m_circle_vao.unbind();
+        m_circle_shader->unbind();
+    }
+}
+void Renderer2D::drawCircle(const glm::mat4& transform, const glm::vec4& color) {
+
+    if (m_circle_vertices.size() >= MAX_VERTICES) {
+        nextBatch();
+    }
+
+    constexpr size_t vertex_count = 4;
+    constexpr glm::vec2 texture_coords[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
+    constexpr glm::vec4 quad_vertices[] = {
+        {-0.5, -0.5, 0.0, 1.0},
+        {0.5, -0.5, 0.0, 1.0},
+        {0.5, 0.5, 0.0, 1.0},
+        {-0.5, 0.5, 0.0, 1.0},
+    };
+
+    for (size_t i = 0; i < vertex_count; i++) {
+        CircleVertex vertex{
+            .world_position = transform * quad_vertices[i],
+            .local_position = quad_vertices[i] * 2.0f,
+            .color = color,
+        };
+        m_circle_vertices.emplace_back(vertex);
     }
 }
 
@@ -218,6 +276,7 @@ void Renderer2D::startBatch() {
     m_texture_idx = 0;
 
     m_text_vertices.clear();
+    m_circle_vertices.clear();
 }
 
 void Renderer2D::nextBatch() {
