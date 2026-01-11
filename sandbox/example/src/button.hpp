@@ -10,6 +10,13 @@
 #include "renderer/font.hpp"
 #include "renderer/texture.hpp"
 
+struct Ball {
+    glm::vec2 position;
+    glm::vec2 velocity;
+    float radius;
+    float mass;
+};
+
 class ButtonLayer : public mamba::Layer {
   public:
     ButtonLayer();
@@ -27,4 +34,6 @@ class ButtonLayer : public mamba::Layer {
     glm::vec2 m_button_pos{100.0f, 100.0f};
     glm::vec2 m_button_scale{150.0f, 50.0f};
     bool m_is_hovered{false};
+
+    Ball m_ball;
 };
