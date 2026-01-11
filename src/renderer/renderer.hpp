@@ -35,6 +35,8 @@ class Renderer2D {
         glm::vec4 world_position;
         glm::vec4 local_position;
         glm::vec4 color;
+        float fade;
+        float thickness;
     };
 
   public:

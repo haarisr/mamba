@@ -79,10 +79,8 @@ Renderer2D::Renderer2D() {
 
     {
         mamba::Renderer::VertexLayout layout = {
-
-            {ShaderDataType::Float4, 0},
-            {ShaderDataType::Float4, 1},
-            {ShaderDataType::Float4, 2},
+            {ShaderDataType::Float4, 0}, {ShaderDataType::Float4, 1}, {ShaderDataType::Float4, 2},
+            {ShaderDataType::Float1, 3}, {ShaderDataType::Float1, 4},
         };
         VertexBuffer<CircleVertex> buffer{MAX_VERTICES};
         m_circle_vbo.emplace(std::move(buffer));
@@ -191,12 +189,16 @@ void Renderer2D::drawCircle(const glm::mat4& transform, const glm::vec4& color) 
         {0.5, 0.5, 0.0, 1.0},
         {-0.5, 0.5, 0.0, 1.0},
     };
+    float fade = 0.005;
+    float thickness = 1.0f;
 
     for (size_t i = 0; i < vertex_count; i++) {
         CircleVertex vertex{
             .world_position = transform * quad_vertices[i],
             .local_position = quad_vertices[i] * 2.0f,
             .color = color,
+            .fade = fade,
+            .thickness = thickness,
         };
         m_circle_vertices.emplace_back(vertex);
     }
