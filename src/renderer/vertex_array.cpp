@@ -18,8 +18,5 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 void VertexArray::bind() { glBindVertexArray(m_handle); }
 void VertexArray::unbind() { glBindVertexArray(0); }
 
-void VertexArray::addIndexBuffer(const IndexBuffer& buffer) {
-    glVertexArrayElementBuffer(m_handle, buffer.handle());
-}
 
 } // namespace mamba::Renderer

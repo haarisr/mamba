@@ -3,13 +3,13 @@
 #include "glm/fwd.hpp"
 #include "renderer/camera.hpp"
 #include "renderer/font.hpp"
-#include "renderer/index_buffer.hpp"
+#include "renderer/gpu_buffer.hpp"
 #include "renderer/shader.hpp"
 #include "renderer/texture.hpp"
 #include "renderer/vertex_array.hpp"
-#include "renderer/vertex_buffer.hpp"
 
 #include <array>
+#include <cstdint>
 #include <optional>
 #include <string_view>
 
@@ -67,7 +67,7 @@ class Renderer2D {
 
     // Quad rendering
     std::optional<mamba::Renderer::Shader> m_shader;
-    std::optional<mamba::Renderer::IndexBuffer> m_ebo;
+    std::optional<mamba::Renderer::IndexBuffer<std::uint32_t>> m_ebo;
     std::optional<mamba::Renderer::VertexBuffer<QuadVertex>> m_vbo;
     mamba::Renderer::VertexArray m_vao;
     std::vector<QuadVertex> m_quad_vertices;

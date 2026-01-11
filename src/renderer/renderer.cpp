@@ -1,4 +1,5 @@
 #include "renderer.hpp"
+#include "renderer/gpu_buffer.hpp"
 #include "shaders/shaders.hpp"
 
 #include "glm/gtc/type_ptr.hpp"

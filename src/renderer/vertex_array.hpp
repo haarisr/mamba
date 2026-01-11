@@ -1,8 +1,8 @@
 #pragma once
 
-#include "renderer/index_buffer.hpp"
-#include "renderer/vertex_buffer.hpp"
+#include "renderer/gpu_buffer.hpp"
 
+#include <cstdint>
 #include <glad/glad.h>
 #include <utility>
 #include <vector>
@@ -34,8 +34,11 @@ class VertexArray {
     void bind();
     void unbind();
 
-    template <typename T> void addVertexBuffer(const VertexBuffer<T>&, const VertexLayout&);
-    void addIndexBuffer(const IndexBuffer&);
+    template <typename T>
+    void addVertexBuffer(const VertexBuffer<T>&, const VertexLayout&);
+
+    template <typename T>
+    void addIndexBuffer(const IndexBuffer<T>&);
 
   private:
     GLuint m_handle{0};
@@ -74,6 +77,11 @@ void VertexArray::addVertexBuffer(const VertexBuffer<T>& buffer, const VertexLay
         glVertexArrayAttribBinding(m_handle, pos, 0);
         stride += sizeOf(type);
     }
+}
+
+template <typename T>
+void VertexArray::addIndexBuffer(const IndexBuffer<T>& buffer) {
+    glVertexArrayElementBuffer(m_handle, buffer.handle());
 }
 
 namespace {
