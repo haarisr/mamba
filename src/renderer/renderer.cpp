@@ -9,6 +9,7 @@
 #include <array>
 #include <cstdint>
 #include <numeric>
+#include <span>
 
 namespace mamba::Renderer {
 
@@ -50,6 +51,7 @@ Renderer2D::Renderer2D() {
 
     // Create shared EBO
     m_ebo.emplace(getIndices());
+    m_ubo.emplace(UniformBuffer<CameraData>(1));
 
     // Create quad VAO
     {
@@ -105,19 +107,10 @@ Renderer2D::Renderer2D() {
 }
 
 void Renderer2D::begin(const OrthographicCamera& camera) {
-    const auto& vp = camera.getViewProjectionMatrix();
+    CameraData data{camera.getViewProjectionMatrix()};
 
-    m_shader->bind();
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(vp));
-    m_shader->unbind();
-
-    m_text_shader->bind();
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(vp));
-    m_text_shader->unbind();
-
-    m_circle_shader->bind();
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(vp));
-    m_circle_shader->unbind();
+    m_ubo->bind(0);
+    m_ubo->update(std::span(&data, 1));
 
     startBatch();
 }

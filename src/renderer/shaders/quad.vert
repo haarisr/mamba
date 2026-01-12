@@ -9,7 +9,9 @@ out vec4 vColor;
 out vec2 vTexCoord;
 out flat int vTexIndex;
 
-layout(location = 0) uniform mat4 uViewProjection;
+layout(std140, binding=0) uniform Camera {
+    mat4 uViewProjection;
+};
 
 void main() {
     gl_Position = uViewProjection * aPosition;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glm/detail/qualifier.hpp"
 #include "glm/fwd.hpp"
 #include "renderer/camera.hpp"
 #include "renderer/font.hpp"
@@ -39,6 +40,10 @@ class Renderer2D {
         float thickness;
     };
 
+    struct CameraData {
+        glm::mat4 view_projection;
+    };
+
   public:
     Renderer2D();
 
@@ -64,6 +69,7 @@ class Renderer2D {
 
   private:
     std::optional<mamba::Renderer::Texture> m_white_texture;
+    std::optional<mamba::Renderer::UniformBuffer<CameraData>> m_ubo;
 
     // Quad rendering
     std::optional<mamba::Renderer::Shader> m_shader;

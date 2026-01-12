@@ -68,5 +68,8 @@ template <typename T>
     requires std::is_integral_v<T>
 using IndexBuffer = GPUBuffer<GL_ELEMENT_ARRAY_BUFFER, T>;
 
+template <typename T>
+using UniformBuffer = GPUBuffer<GL_UNIFORM_BUFFER, T>;
+
 } // namespace Renderer
 } // namespace mamba

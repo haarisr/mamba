@@ -11,7 +11,9 @@ out vec4 vLocalPosition;
 out float vFade;
 out float vThickness;
 
-layout(location = 0) uniform mat4 uViewProjection;
+layout(std140, binding=0) uniform Camera {
+    mat4 uViewProjection;
+};
 
 void main() {
     gl_Position = uViewProjection * aWorldPosition;
