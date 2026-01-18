@@ -5,12 +5,16 @@
 #include "glm/ext/matrix_float4x4.hpp"
 #include "input.hpp"
 #include "physics/collision.hpp"
+#include "renderer/texture.hpp"
 
 ButtonLayer::ButtonLayer() {
     using namespace ::mamba::Renderer;
     // Load texture
     m_texture = Texture::create("sandbox/example/assets/textures/Button.png");
     m_font = Font::create();
+
+    m_ball = Ball({0.0f, 0.0f}, {0, 0}, 0.25, 1);
+    m_ground = Ground{.center = {0.0f, -1.0f}, .size = {2.0f, 0.3f}};
 }
 
 void ButtonLayer::onUpdate(float dt) {
@@ -20,7 +24,6 @@ void ButtonLayer::onUpdate(float dt) {
     if (!m_camera_controller) {
         float aspect_ratio = framebuffer_size.x / framebuffer_size.y;
         m_camera_controller = mamba::CameraController(aspect_ratio);
-        m_ball = Ball({0.0f, 0.0f}, {0, 0}, 0.25, 1);
         m_ui_camera = mamba::OrthographicCamera(0.0f, framebuffer_size.x, 0.0f, framebuffer_size.y);
     }
 
@@ -51,7 +54,7 @@ void ButtonLayer::onUpdate(float dt) {
     m_ball.position.y += m_ball.velocity.y * dt;
 
     mamba::physics::Circle ball_collider = {m_ball.position, m_ball.radius};
-    mamba::physics::AABB ground_collider = {{0.0f, -1.0f}, {1.0f, 0.001f}};
+    mamba::physics::AABB ground_collider = {m_ground.center, m_ground.size};
     // Bottom wall
     if (auto hit = mamba::physics::collides(ball_collider, ground_collider)) {
         m_ball.position.y += hit->penetration;
@@ -92,13 +95,22 @@ void ButtonLayer::onRender() {
 
     // World pass
     renderer.begin(m_camera_controller->getCamera());
+    {
+        glm::mat4 ground_model(1.0f);
+        ground_model = glm::translate(ground_model, glm::vec3(m_ground.center, 1.0));
+        ground_model = glm::scale(ground_model, glm::vec3(m_ground.size, 1.0));
+        renderer.drawQuad(ground_model, {0.2, 0.8, 0.3, 1.0});
+    }
 
-    glm::mat4 circle_model(1.0f);
-    circle_model = glm::translate(circle_model, glm::vec3(m_ball.position, 1.0));
-    circle_model = glm::scale(circle_model, glm::vec3(glm::vec2(m_ball.radius * 2.0f), 1.0f));
-    renderer.drawCircle(circle_model, {1.0, 1.0, 1.0, 1.0});
+    {
+        glm::mat4 circle_model(1.0f);
+        circle_model = glm::translate(circle_model, glm::vec3(m_ball.position, 1.0));
+        circle_model = glm::scale(circle_model, glm::vec3(glm::vec2(m_ball.radius * 2.0f), 1.0f));
+        renderer.drawCircle(circle_model, {1.0, 1.0, 1.0, 1.0});
+    }
 
-    renderer.drawText("Hello Mamba!", *m_font, {-1.33f, 1.0f}, 0.3f, {1.0f, 1.0f, 1.0f, 1.0f});
+    renderer.drawText("Hello Mamba!", *m_font, {-1.33f, 1.0 - 0.2f}, 0.3f,
+                      {1.0f, 1.0f, 1.0f, 1.0f});
 
     renderer.end();
 
@@ -108,7 +120,7 @@ void ButtonLayer::onRender() {
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(m_button_pos, 0.0f));
     model = glm::scale(model, glm::vec3(m_button_scale, 1.0f));
-    auto tint = m_is_hovered ? glm::vec4(2.0, 2.0, 2.0, 1.0) : glm::vec4(1.0, 1.0, 1.0, 1.0);
+    auto tint = m_is_hovered ? glm::vec4(glm::vec3(2.0), 1.0) : glm::vec4(glm::vec3(1.0), 1.0);
     renderer.drawQuad(model, m_texture.value(), tint);
 
     renderer.end();

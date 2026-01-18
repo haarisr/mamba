@@ -15,6 +15,11 @@ struct Ball {
     float mass;
 };
 
+struct Ground {
+    glm::vec2 center;
+    glm::vec2 size;
+};
+
 class ButtonLayer : public mamba::Layer {
   public:
     ButtonLayer();
@@ -36,4 +41,5 @@ class ButtonLayer : public mamba::Layer {
     bool m_is_hovered{false};
 
     Ball m_ball;
+    Ground m_ground;
 };

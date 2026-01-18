@@ -24,12 +24,12 @@ class GPUBuffer {
   public:
     GPUBuffer(size_t max_count) {
         glCreateBuffers(1, &m_handle);
-        glNamedBufferStorage(m_handle, stride() * max_count, nullptr, GL_DYNAMIC_STORAGE_BIT);
+        glNamedBufferData(m_handle, stride() * max_count, nullptr, GL_DYNAMIC_DRAW);
     }
 
     GPUBuffer(std::span<const T> data) {
         glCreateBuffers(1, &m_handle);
-        glNamedBufferStorage(m_handle, data.size_bytes(), data.data(), GL_DYNAMIC_STORAGE_BIT);
+        glNamedBufferData(m_handle, data.size_bytes(), data.data(), GL_DYNAMIC_DRAW);
     }
 
     ~GPUBuffer() { glDeleteBuffers(1, &m_handle); }
@@ -52,6 +52,8 @@ class GPUBuffer {
     GLuint handle() const { return m_handle; }
 
     void update(std::span<const T> data) {
+        // Orphan the old buffer
+        glNamedBufferData(m_handle, data.size_bytes(), nullptr, GL_DYNAMIC_DRAW);
         glNamedBufferSubData(m_handle, 0, data.size_bytes(), data.data());
     }
 

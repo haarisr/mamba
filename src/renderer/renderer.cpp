@@ -2,7 +2,6 @@
 #include "renderer/gpu_buffer.hpp"
 #include "shaders/shaders.hpp"
 
-#include "glm/gtc/type_ptr.hpp"
 #include "renderer/font.hpp"
 #include "renderer/texture.hpp"
 #include <algorithm>
@@ -205,6 +204,10 @@ void Renderer2D::drawQuad(const glm::mat4& transform, const Texture& texture,
         nextBatch();
     }
 
+    if (m_texture_idx >= MAX_TEXTURES) {
+        nextBatch();
+    }
+
     constexpr size_t vertex_count = 4;
     constexpr glm::vec2 texture_coords[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
     constexpr glm::vec4 quad_vertices[] = {
@@ -251,9 +254,6 @@ int Renderer2D::insertTexture(const Texture& texture) {
     auto iter = std::ranges::find(m_texture_slots.begin(), end, texture.handle());
     if (iter != end) {
         return std::distance(m_texture_slots.begin(), iter);
-    }
-    if (m_texture_idx >= MAX_TEXTURES) {
-        nextBatch();
     }
     m_texture_slots[m_texture_idx] = texture.handle();
     return m_texture_idx++;
