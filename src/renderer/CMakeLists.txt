@@ -1,5 +1,6 @@
 add_library(mamba_renderer STATIC
  camera.cpp
+ camera_controller.cpp
  font.cpp
  renderer.cpp
  shader.cpp

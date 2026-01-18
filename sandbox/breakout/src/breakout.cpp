@@ -80,7 +80,7 @@ void BreakoutLayer::onUpdate(float dt) {
 
     // Initialize or update camera
     if (!m_camera || size_changed) {
-        m_camera = std::make_unique<mamba::OrthographicCamera>(m_screen_width, m_screen_height);
+        m_camera = std::make_unique<mamba::OrthographicCamera>(0.0f, m_screen_width, 0.0f, m_screen_height);
 
         // Init game on first frame
         if (m_bricks.empty()) {

@@ -7,9 +7,8 @@ namespace mamba {
 
 class OrthographicCamera {
   public:
-    OrthographicCamera(float width, float height);
-
-    void setProjection(float width, float height);
+    OrthographicCamera(float left, float right, float bottom, float top);
+    void setProjection(float left, float right, float bottom, float top);
 
     void setPosition(const glm::vec2& position);
     void setRotation(float rotation);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glm/detail/qualifier.hpp"
 #include "glm/fwd.hpp"
 #include "renderer/camera.hpp"
 #include "renderer/font.hpp"

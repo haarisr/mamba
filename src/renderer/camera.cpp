@@ -2,10 +2,12 @@
 
 namespace mamba {
 
-OrthographicCamera::OrthographicCamera(float width, float height) { setProjection(width, height); }
+OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) {
+    setProjection(left, right, bottom, top);
+}
 
-void OrthographicCamera::setProjection(float width, float height) {
-    m_projection = glm::ortho(0.0f, width, 0.0f, height, -1.0f, 1.0f);
+void OrthographicCamera::setProjection(float left, float right, float bottom, float top) {
+    m_projection = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
     m_viewProjection = m_projection * m_view;
 }
 
