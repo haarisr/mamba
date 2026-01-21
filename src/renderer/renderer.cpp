@@ -175,7 +175,7 @@ void Renderer2D::drawCircle(const glm::mat4& transform, const glm::vec4& color) 
     }
 
     constexpr size_t vertex_count = 4;
-    constexpr glm::vec2 texture_coords[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
+    // constexpr glm::vec2 texture_coords[] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
     constexpr glm::vec4 quad_vertices[] = {
         {-0.5, -0.5, 0.0, 1.0},
         {0.5, -0.5, 0.0, 1.0},

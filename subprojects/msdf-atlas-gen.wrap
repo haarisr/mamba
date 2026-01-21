@@ -1,0 +1,8 @@
+[wrap-git]
+url = https://github.com/Chlumsky/msdf-atlas-gen.git
+revision = c76a32319934c39e51a8c4838240d7b2362b0882
+clone-recursive = true
+depth = 1
+
+[provide]
+msdf-atlas-gen = msdf_atlas_gen_dep

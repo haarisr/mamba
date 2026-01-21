@@ -1,2 +1,9 @@
 build/
 .cache/
+
+subprojects/*
+!subprojects/*.wrap
+!subprojects/glad/
+!subprojects/glad/**
+!subprojects/stb/
+!subprojects/stb/**
