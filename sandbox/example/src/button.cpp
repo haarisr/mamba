@@ -35,6 +35,13 @@ void ButtonLayer::onUpdate(float dt) {
     state.move_right = window.isKeyDown(mamba::Key::D);
     m_camera_controller->onUpdate(dt, state);
 
+    if (state.move_left){
+        m_ball.position.x -= 0.1;
+    }
+    if (state.move_right){
+        m_ball.position.x += 0.1;
+    }
+
     m_ui_camera->setProjection(0.0f, framebuffer_size.x, 0.0f, framebuffer_size.y);
 
     // Anchor button to lower-left in pixels
